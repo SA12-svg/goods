@@ -679,10 +679,10 @@
           <table>
             <thead><tr><th>이름</th><th>이메일</th><th>가입일</th><th>주문 수</th><th>누적 구매액</th><th>등급</th></tr></thead>
             <tbody>
-              <tr><td>김지수</td><td>jisu@email.com</td><td>2024.03.12</td><td>7</td><td>₩284,000</td><td><span class="badge badge-gold">VIP</span></td></tr>
-              <tr><td>박영우</td><td>youngwoo@email.com</td><td>2024.11.05</td><td>3</td><td>₩482,000</td><td><span class="badge badge-gold">VIP</span></td></tr>
-              <tr><td>이소연</td><td>soyeon@email.com</td><td>2025.01.20</td><td>1</td><td>₩2,225,000</td><td><span class="badge badge-success">기업</span></td></tr>
-              <tr><td>최민준</td><td>minjun@email.com</td><td>2025.04.08</td><td>2</td><td>₩155,600</td><td><span class="badge badge-gray">일반</span></td></tr>
+              <tr><td>김지수</td><td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b1dbd8c2c4f1d4dcd0d8dd9fd2dedc">[email&#160;protected]</a></td><td>2024.03.12</td><td>7</td><td>₩284,000</td><td><span class="badge badge-gold">VIP</span></td></tr>
+              <tr><td>박영우</td><td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9fe6f0eaf1f8e8f0f0dffaf2fef6f3b1fcf0f2">[email&#160;protected]</a></td><td>2024.11.05</td><td>3</td><td>₩482,000</td><td><span class="badge badge-gold">VIP</span></td></tr>
+              <tr><td>이소연</td><td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b0c3dfc9d5dfdef0d5ddd1d9dc9ed3dfdd">[email&#160;protected]</a></td><td>2025.01.20</td><td>1</td><td>₩2,225,000</td><td><span class="badge badge-success">기업</span></td></tr>
+              <tr><td>최민준</td><td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4b262225213e250b2e262a222765282426">[email&#160;protected]</a></td><td>2025.04.08</td><td>2</td><td>₩155,600</td><td><span class="badge badge-gray">일반</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -734,7 +734,7 @@
 <!-- TOAST -->
 <div class="toast" id="toast">✅ &nbsp; <span id="toastMsg"></span></div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // Chart
 const salesData = [
   {day:'월', val:82}, {day:'화', val:91}, {day:'수', val:74},
@@ -881,21 +881,4 @@ function openInquiry(name, product, content) {
   document.getElementById('inquiryModal').classList.add('open');
 }
 function closeInquiryModal(e) { if (e.target === document.getElementById('inquiryModal')) document.getElementById('inquiryModal').classList.remove('open'); }
-function sendReply() {
-  const reply = document.getElementById('inqReply').value;
-  if (!reply.trim()) { showToast('답변 내용을 입력해주세요'); return; }
-  document.getElementById('inquiryModal').classList.remove('open');
-  showToast('답변이 발송되었습니다');
-}
-
-function showToast(msg) {
-  document.getElementById('toastMsg').textContent = msg;
-  const t = document.getElementById('toast');
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
-}
-
-function openShop() { showToast('쇼핑몰 페이지를 여는 중...'); }
-</script>
-</body>
-</html>
+function sendR
