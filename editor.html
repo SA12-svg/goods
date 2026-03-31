@@ -7,11 +7,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0f0f0f;--sur:#1a1a1a;--sur2:#222;--sur3:#2a2a2a;
-  --bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.13);
-  --gold:#d4a843;--gdim:rgba(212,168,67,.12);--glt:#e8c87d;
-  --tx:#f0ede8;--tx2:#a8a5a0;--tx3:#555;
-  --ok:#4ade80;--err:#f87171;--info:#60a5fa;
+  --bg:#f5f2ed;--sur:#ffffff;--sur2:#f0ece6;--sur3:#e8e4de;
+  --bd:rgba(0,0,0,.08);--bd2:rgba(0,0,0,.14);
+  --gold:#c4a043;--gdim:rgba(196,160,67,.1);--glt:#d4b055;
+  --tx:#1a1a1a;--tx2:#555;--tx3:#999;
+  --ok:#2e7d5e;--err:#c0392b;--info:#2563eb;
   --panel:260px;--rpanel:220px;--top:56px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -25,7 +25,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans KR',sans-serif;
 .tb-center{display:flex;align-items:center;gap:4px;}
 .tool-btn{background:none;border:1px solid transparent;color:var(--tx2);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-family:inherit;transition:all .2s;display:flex;align-items:center;gap:4px;white-space:nowrap;}
 .tool-btn:hover{background:var(--sur2);color:var(--tx);}
-.tool-btn.active{background:var(--gdim);border-color:rgba(212,168,67,.3);color:var(--gold);}
+.tool-btn.active{background:rgba(196,160,67,.12);border-color:rgba(196,160,67,.4);color:#b8902a;}
 .tool-sep{width:1px;height:20px;background:var(--bd2);margin:0 4px;}
 .tb-right{display:flex;gap:6px;}
 .btn-tb{border:1px solid var(--bd2);background:none;color:var(--tx2);padding:7px 14px;border-radius:7px;cursor:pointer;font-size:12px;font-family:inherit;transition:all .2s;}
@@ -63,18 +63,18 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans KR',sans-serif;
 /* 요소 추가 */
 .add-btns{display:flex;flex-direction:column;gap:5px;}
 .add-btn{width:100%;padding:9px 12px;background:var(--sur2);border:1px solid var(--bd);border-radius:8px;color:var(--tx2);font-family:inherit;font-size:12px;cursor:pointer;text-align:left;transition:all .2s;display:flex;align-items:center;gap:8px;}
-.add-btn:hover{border-color:var(--gold);color:var(--gold);}
+.add-btn:hover{border-color:var(--gold);color:#b8902a;background:rgba(196,160,67,.08);}
 .add-btn-icon{font-size:16px;width:20px;text-align:center;}
 
 /* 폰트 */
 .font-list{display:flex;flex-direction:column;gap:4px;}
 .font-item{padding:8px 10px;border-radius:6px;cursor:pointer;font-size:13px;border:1px solid transparent;transition:all .2s;color:var(--tx2);}
-.font-item:hover,.font-item.active{background:var(--sur2);border-color:var(--bd);color:var(--tx);}
+.font-item:hover,.font-item.active{background:var(--sur2);border-color:var(--bd2);color:#1a1a1a;}
 
 /* 스티커 */
 .sticker-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;}
 .sticker-item{aspect-ratio:1;border-radius:6px;background:var(--sur2);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;border:1px solid transparent;transition:all .2s;}
-.sticker-item:hover{border-color:var(--gold);}
+.sticker-item:hover{border-color:var(--gold);background:rgba(196,160,67,.08);}
 
 /* 색상 */
 .color-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
@@ -82,8 +82,8 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans KR',sans-serif;
 .color-dot:hover,.color-dot.active{border-color:var(--gold);transform:scale(1.1);}
 
 /* ── CANVAS AREA ── */
-.canvas-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0a0a0a;position:relative;overflow:hidden;}
-.canvas-bg{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.025) 1px,transparent 1px);background-size:20px 20px;}
+.canvas-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#e8e4de;position:relative;overflow:hidden;}
+.canvas-bg{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(0,0,0,.06) 1px,transparent 1px);background-size:20px 20px;}
 
 /* 상품 프리뷰 컨테이너 */
 .product-stage{position:relative;display:flex;align-items:center;justify-content:center;}
@@ -98,13 +98,13 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans KR',sans-serif;
 #designOverlay{position:absolute;top:0;left:0;cursor:default;}
 
 /* 줌 컨트롤 */
-.zoom-bar{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:var(--sur);border:1px solid var(--bd2);border-radius:20px;padding:4px 12px;display:flex;align-items:center;gap:8px;}
-.zoom-btn{background:none;border:none;color:var(--tx2);cursor:pointer;font-size:18px;padding:2px 6px;transition:color .2s;}
+.zoom-bar{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--bd2);border-radius:20px;padding:4px 12px;display:flex;align-items:center;gap:8px;box-shadow:0 2px 8px rgba(0,0,0,.1);}
+.zoom-btn{background:none;border:none;color:#555;cursor:pointer;font-size:18px;padding:2px 6px;transition:color .2s;}
 .zoom-btn:hover{color:var(--gold);}
 .zoom-lbl{font-size:12px;color:var(--tx3);min-width:36px;text-align:center;}
 
 /* 상품 변경 힌트 */
-.stage-label{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.7);border:1px solid var(--bd2);border-radius:20px;padding:5px 14px;font-size:11px;color:var(--tx2);white-space:nowrap;}
+.stage-label{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.9);border:1px solid var(--bd2);border-radius:20px;padding:5px 14px;font-size:11px;color:#555;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.1);}
 
 /* ── RIGHT PANEL ── */
 .rpanel{width:var(--rpanel);background:var(--sur);border-left:1px solid var(--bd);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;}
@@ -133,7 +133,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans KR',sans-serif;
 /* ── 모달 ── */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
 .overlay.open{display:flex;}
-.modal{background:var(--sur);border:1px solid var(--bd2);border-radius:18px;width:90%;max-width:560px;overflow:hidden;}
+.modal{background:#fff;border:1px solid var(--bd2);border-radius:18px;width:90%;max-width:560px;overflow:hidden;}
 .modal-hd{padding:20px 24px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:16px;}
 .modal-close{background:none;border:none;color:var(--tx3);font-size:22px;cursor:pointer;}
 .modal-bd{padding:24px;}
@@ -149,7 +149,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans KR',sans-serif;
 .order-price{color:var(--gold);}
 
 /* ── TOAST ── */
-.toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--sur2);border:1px solid rgba(212,168,67,.3);border-radius:10px;padding:12px 18px;font-size:13px;transform:translateY(60px);opacity:0;transition:all .35s;display:flex;align-items:center;gap:8px;}
+.toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:#1a1a1a;color:#f0ede8;border:1px solid rgba(212,168,67,.3);border-radius:10px;padding:12px 18px;font-size:13px;transform:translateY(60px);opacity:0;transition:all .35s;display:flex;align-items:center;gap:8px;}
 .toast.show{transform:translateY(0);opacity:1;}
 
 /* ── 드래그 선택 핸들 ── */
@@ -556,7 +556,7 @@ let dragStart = {x:0, y:0};
 let elStart = {x:0, y:0};
 let history = [];
 let histIdx = -1;
-let bgColor = '#1a1a1a';
+let bgColor = '#ffffff';
 let designCanvas, designCtx;
 let stageScale = 1; // SVG 렌더 스케일
 
@@ -912,7 +912,7 @@ function renderPropPanel() {
         </div>
       </div>
       <div class="range-row"><span class="prop-lbl">투명도</span><input type="range" class="prop-range" min="0" max="1" step=".05" value="${el.opacity||1}" oninput="selProp('opacity',+this.value);this.nextElementSibling.textContent=Math.round(this.value*100)+'%'"><span class="range-val">${Math.round((el.opacity||1)*100)}%</span></div>
-      <button style="width:100%;margin-top:6px;padding:6px;background:#f87171;border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px" onclick="deleteSelected()">삭제</button>`;
+      <button style="width:100%;margin-top:6px;padding:6px;background:#f87171;border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px" onclick="deleteSelected()" style="width:100%;margin-top:6px;padding:7px;background:#fde8e8;color:#c0392b;border:1px solid #fca5a5;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500">🗑 삭제</button>`;
   } else if (el.type==='rect') {
     p.innerHTML=`
       <div class="prop-row"><span class="prop-lbl">채우기</span><input class="prop-color" type="color" value="${toHex(el.color||'#000')}" oninput="selProp('color',this.value)"></div>
@@ -922,13 +922,13 @@ function renderPropPanel() {
       <div class="prop-row"><span class="prop-lbl">가로</span><input class="prop-input sm" type="number" value="${Math.round(el.w)}" oninput="selProp('w',+this.value)"></div>
       <div class="prop-row"><span class="prop-lbl">세로</span><input class="prop-input sm" type="number" value="${Math.round(el.h)}" oninput="selProp('h',+this.value)"></div>
       <div class="range-row"><span class="prop-lbl">투명도</span><input type="range" class="prop-range" min="0" max="1" step=".05" value="${el.opacity||1}" oninput="selProp('opacity',+this.value)"><span class="range-val">${Math.round((el.opacity||1)*100)}%</span></div>
-      <button style="width:100%;margin-top:6px;padding:6px;background:#f87171;border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px" onclick="deleteSelected()">삭제</button>`;
+      <button style="width:100%;margin-top:6px;padding:6px;background:#f87171;border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px" onclick="deleteSelected()" style="width:100%;margin-top:6px;padding:7px;background:#fde8e8;color:#c0392b;border:1px solid #fca5a5;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500">🗑 삭제</button>`;
   } else {
     p.innerHTML=`
       <div class="range-row"><span class="prop-lbl">투명도</span><input type="range" class="prop-range" min="0" max="1" step=".05" value="${el.opacity||1}" oninput="selProp('opacity',+this.value)"><span class="range-val">${Math.round((el.opacity||1)*100)}%</span></div>
       <div class="prop-row"><span class="prop-lbl">가로</span><input class="prop-input sm" type="number" value="${Math.round(el.w||100)}" oninput="selProp('w',+this.value)"></div>
       <div class="prop-row"><span class="prop-lbl">세로</span><input class="prop-input sm" type="number" value="${Math.round(el.h||100)}" oninput="selProp('h',+this.value)"></div>
-      <button style="width:100%;margin-top:6px;padding:6px;background:#f87171;border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px" onclick="deleteSelected()">삭제</button>`;
+      <button style="width:100%;margin-top:6px;padding:6px;background:#f87171;border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px" onclick="deleteSelected()" style="width:100%;margin-top:6px;padding:7px;background:#fde8e8;color:#c0392b;border:1px solid #fca5a5;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500">🗑 삭제</button>`;
   }
 }
 
@@ -980,13 +980,13 @@ function applyFont(family, el) {
 }
 
 function renderBgColors() {
-  const colors=['#0a0a0a','#1a1a1a','#ffffff','#f5e6c8','#1a2f1a','#0f0f0f','#1a1040','#2f1a1a','#1a2f2f','#050510','#f5f5f5','#3d2b1a'];
+  const colors=['#ffffff','#f5f2ed','#f5e6c8','#fce4d6','#e8f5ee','#dbeafe','#f3e8ff','#fef3cd','#1a1a1a','#0f0f0f','#1a2f1a','#050510'];
   document.getElementById('bgColorGrid').innerHTML = colors.map(c=>
     `<div class="color-dot" style="background:${c};border:1px solid rgba(255,255,255,.1)" onclick="setBgColor('${c}')"></div>`).join('');
 }
 
 function renderTextColors() {
-  const colors=['#ffffff','#f0ede8','#d4a843','#4ade80','#60a5fa','#f87171','#c084fc','#fb923c','#000000','#1a1a1a','#555','#888'];
+  const colors=['#1a1a1a','#333333','#555555','#888888','#d4a843','#c0392b','#2563eb','#2e7d5e','#ffffff','#f0ede8','#8b5e3c','#c084fc'];
   document.getElementById('textColorGrid').innerHTML = colors.map(c=>
     `<div class="color-dot" style="background:${c};border:1px solid rgba(255,255,255,.15)" onclick="applyTextColor('${c}')"></div>`).join('');
 }
@@ -1011,20 +1011,26 @@ function addSticker(s) {
 
 // ── 템플릿 로드 ──
 const TEMPLATES = {
-  t1:{color:'#d4a843',texts:[{text:'YOUR NAME',fontSize:28,fontWeight:'bold',fontFamily:'Playfair Display',color:'#d4a843',align:'center'},{text:'2025',fontSize:14,fontWeight:'normal',fontFamily:'Noto Sans KR',color:'rgba(212,168,67,0.5)',align:'center'}]},
-  t2:{color:'#ffffff',texts:[{text:'LOVE',fontSize:42,fontWeight:'bold',fontFamily:'Playfair Display',color:'#ffffff',align:'center'},{text:'forever',fontSize:16,fontWeight:'300',fontFamily:'Noto Sans KR',color:'rgba(255,255,255,0.7)',align:'center'}]},
-  t3:{color:'#8b5e3c',texts:[{text:'FILM STYLE',fontSize:24,fontWeight:'bold',fontFamily:'Playfair Display',color:'#8b5e3c',align:'center'},{text:'© 2025',fontSize:12,fontWeight:'normal',fontFamily:'Noto Sans KR',color:'#8b5e3c',align:'center'}]},
+  t1:{bg:'#1a1a1a',texts:[{text:'YOUR NAME',fontSize:28,fontWeight:'bold',fontFamily:'Playfair Display',color:'#d4a843',align:'center'},{text:'2025',fontSize:14,fontWeight:'normal',fontFamily:'Noto Sans KR',color:'rgba(212,168,67,0.6)',align:'center'}]},
+  t2:{bg:'#ff9a9e',texts:[{text:'LOVE',fontSize:42,fontWeight:'bold',fontFamily:'Playfair Display',color:'#ffffff',align:'center'},{text:'forever',fontSize:16,fontWeight:'300',fontFamily:'Noto Sans KR',color:'rgba(255,255,255,0.85)',align:'center'}]},
+  t3:{bg:'#f5e6c8',texts:[{text:'FILM STYLE',fontSize:24,fontWeight:'bold',fontFamily:'Playfair Display',color:'#8b5e3c',align:'center'},{text:'© 2025',fontSize:12,fontWeight:'normal',fontFamily:'Noto Sans KR',color:'#8b5e3c',align:'center'}]},
+  t4:{bg:'#0f0f0f',texts:[{text:'STREET',fontSize:32,fontWeight:'bold',fontFamily:'Noto Sans KR',color:'#00ff88',align:'center'},{text:'MODE 2025',fontSize:16,fontWeight:'normal',fontFamily:'Noto Sans KR',color:'rgba(0,255,136,0.7)',align:'center'}]},
+  t5:{bg:'#a8edea',texts:[{text:'SOFT',fontSize:48,fontWeight:'bold',fontFamily:'Playfair Display',color:'#ffffff',align:'center'},{text:'& SWEET',fontSize:18,fontWeight:'300',fontFamily:'Noto Sans KR',color:'rgba(80,60,120,0.8)',align:'center'}]},
+  t6:{bg:'#050510',texts:[{text:'CYBER',fontSize:36,fontWeight:'bold',fontFamily:'Noto Sans KR',color:'#ff00ff',align:'center'},{text:'2025',fontSize:22,fontWeight:'normal',fontFamily:'Noto Sans KR',color:'#00ffff',align:'center'}]},
+  t7:{bg:'#1a2f1a',texts:[{text:'NATURE',fontSize:28,fontWeight:'bold',fontFamily:'Playfair Display',color:'#7ec850',align:'center'}]},
+  t8:{bg:'#ffffff',texts:[{text:'CLASSIC',fontSize:32,fontWeight:'bold',fontFamily:'Playfair Display',color:'#1a1a1a',align:'center'},{text:'MOMENTO',fontSize:12,fontWeight:'normal',fontFamily:'Noto Sans KR',color:'#999',align:'center'}]},
 };
 
 function loadTemplate(id) {
   const tmpl = TEMPLATES[id];
   if (!tmpl) return;
   elements = [];
+  if (tmpl.bg) bgColor = tmpl.bg;
   setTimeout(() => {
     if (!designCanvas) return;
     const cw = designCanvas.width, ch = designCanvas.height;
     tmpl.texts.forEach((t, i) => {
-      elements.push({id:'e'+Date.now()+i, type:'text', x:cw/2, y:ch*0.35+i*50, opacity:1, ...t});
+      elements.push({id:'e'+Date.now()+i, type:'text', x:cw/2, y:ch*0.38+i*55, opacity:1, ...t});
     });
     saveHist(); render(); renderLayers();
   }, 200);
