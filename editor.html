@@ -3,252 +3,294 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>디자인 편집기 — MOMENTO</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+<title>커스텀 디자인 편집기 — MOMENTO</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0a0a0a;--surface:#141414;--surface2:#1c1c1c;--surface3:#242424;--border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.15);--gold:#d4a843;--gold-light:#e8c87d;--gold-dim:rgba(212,168,67,.12);--text:#f0ede8;--text2:#a8a5a0;--text3:#666;--panel:220px;--topbar:56px;}
+:root{
+  --bg:#0f0f0f;--sur:#1a1a1a;--sur2:#222;--sur3:#2a2a2a;
+  --bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.13);
+  --gold:#d4a843;--gdim:rgba(212,168,67,.12);--glt:#e8c87d;
+  --tx:#f0ede8;--tx2:#a8a5a0;--tx3:#555;
+  --ok:#4ade80;--err:#f87171;--info:#60a5fa;
+  --panel:260px;--rpanel:220px;--top:56px;
+}
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;overflow:hidden;}
-body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;display:flex;flex-direction:column;}
+body{background:var(--bg);color:var(--tx);font-family:'Noto Sans KR',sans-serif;display:flex;flex-direction:column;}
 
-/* TOP BAR */
-.topbar{height:var(--topbar);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;gap:12px;flex-shrink:0;z-index:100;}
-.tb-left{display:flex;align-items:center;gap:12px;}
-.tb-logo{font-family:'Playfair Display',serif;font-size:18px;letter-spacing:3px;color:var(--gold);}
-.tb-sep{width:1px;height:20px;background:var(--border2);}
-.tb-product{font-size:13px;color:var(--text2);}
-.tb-center{display:flex;align-items:center;gap:6px;}
-.tb-tool-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-family:inherit;transition:all .2s;display:flex;align-items:center;gap:5px;}
-.tb-tool-btn:hover,.tb-tool-btn.active{border-color:var(--gold);color:var(--gold);background:var(--gold-dim);}
-.tb-right{display:flex;align-items:center;gap:8px;}
-.btn-save{background:none;border:1px solid var(--border2);color:var(--text2);padding:7px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-family:inherit;transition:all .2s;}
-.btn-save:hover{border-color:var(--gold);color:var(--gold);}
-.btn-order{background:var(--gold);border:none;color:#000;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;transition:all .2s;}
-.btn-order:hover{background:var(--gold-light);}
+/* ── TOPBAR ── */
+.topbar{height:var(--top);background:var(--sur);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 16px;gap:10px;flex-shrink:0;z-index:100;}
+.tb-logo{font-family:'Playfair Display',serif;font-size:17px;letter-spacing:3px;color:var(--gold);}
+.tb-product{font-size:12px;color:var(--tx3);padding:4px 10px;background:var(--sur2);border-radius:6px;}
+.tb-center{display:flex;align-items:center;gap:4px;}
+.tool-btn{background:none;border:1px solid transparent;color:var(--tx2);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-family:inherit;transition:all .2s;display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.tool-btn:hover{background:var(--sur2);color:var(--tx);}
+.tool-btn.active{background:var(--gdim);border-color:rgba(212,168,67,.3);color:var(--gold);}
+.tool-sep{width:1px;height:20px;background:var(--bd2);margin:0 4px;}
+.tb-right{display:flex;gap:6px;}
+.btn-tb{border:1px solid var(--bd2);background:none;color:var(--tx2);padding:7px 14px;border-radius:7px;cursor:pointer;font-size:12px;font-family:inherit;transition:all .2s;}
+.btn-tb:hover{border-color:var(--gold);color:var(--gold);}
+.btn-order{background:var(--gold);border:none;color:#000;padding:8px 18px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;transition:all .2s;}
+.btn-order:hover{background:var(--glt);}
 
-/* EDITOR LAYOUT */
-.editor-wrap{display:flex;flex:1;overflow:hidden;}
+/* ── LAYOUT ── */
+.workspace{display:flex;flex:1;overflow:hidden;}
 
-/* LEFT PANEL */
-.left-panel{width:var(--panel);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;}
-.panel-tabs{display:flex;border-bottom:1px solid var(--border);}
-.ptab{flex:1;padding:10px 4px;text-align:center;font-size:11px;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;}
-.ptab.active,.ptab:hover{color:var(--gold);border-bottom-color:var(--gold);}
-.panel-section{padding:12px;}
-.panel-title{font-size:10px;color:var(--text3);letter-spacing:1px;margin-bottom:8px;}
+/* ── LEFT PANEL ── */
+.lpanel{width:var(--panel);background:var(--sur);border-right:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;}
+.lp-tabs{display:flex;border-bottom:1px solid var(--bd);}
+.lp-tab{flex:1;padding:10px 4px;text-align:center;font-size:11px;color:var(--tx3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;}
+.lp-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.lp-body{flex:1;overflow-y:auto;padding:12px;}
+.lp-body::-webkit-scrollbar{width:3px;}
+.lp-body::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px;}
+.lp-section-title{font-size:10px;color:var(--tx3);letter-spacing:1px;margin-bottom:8px;margin-top:12px;}
+.lp-section-title:first-child{margin-top:0;}
 
-/* 템플릿 목록 */
-.tmpl-list{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
-.tmpl-item{border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:all .2s;aspect-ratio:1;position:relative;}
-.tmpl-item:hover,.tmpl-item.active{border-color:var(--gold);}
-.tmpl-item canvas{width:100%;height:100%;display:block;}
-.tmpl-item-name{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.7);font-size:9px;color:#fff;padding:3px 4px;text-align:center;}
+/* 상품 선택 */
+.product-list{display:flex;flex-direction:column;gap:6px;}
+.product-item{display:flex;align-items:center;gap:10px;padding:10px;background:var(--sur2);border:1px solid var(--bd);border-radius:8px;cursor:pointer;transition:all .2s;}
+.product-item:hover,.product-item.active{border-color:var(--gold);background:var(--gdim);}
+.product-item-icon{font-size:24px;width:36px;text-align:center;}
+.product-item-name{font-size:12px;font-weight:500;}
+.product-item-sub{font-size:10px;color:var(--tx3);}
 
-/* 텍스트 도구 */
-.add-text-btns{display:flex;flex-direction:column;gap:6px;}
-.add-text-btn{width:100%;padding:8px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text2);font-family:inherit;font-size:12px;cursor:pointer;text-align:left;transition:all .2s;}
-.add-text-btn:hover{border-color:var(--gold);color:var(--gold);}
-.font-list{display:flex;flex-direction:column;gap:4px;margin-top:8px;}
-.font-item{padding:8px;border-radius:6px;cursor:pointer;font-size:13px;border:1px solid transparent;transition:all .2s;}
-.font-item:hover,.font-item.active{background:var(--surface2);border-color:var(--border2);}
+/* 뷰 선택 (앞/뒤/옆) */
+.view-tabs{display:flex;gap:4px;margin-bottom:10px;}
+.view-tab{flex:1;padding:6px;background:var(--sur2);border:1px solid var(--bd);border-radius:6px;cursor:pointer;font-size:11px;color:var(--tx2);text-align:center;transition:all .2s;}
+.view-tab.active,.view-tab:hover{border-color:var(--gold);color:var(--gold);}
 
-/* 이미지 도구 */
-.img-upload-area{border:2px dashed var(--border2);border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;}
-.img-upload-area:hover{border-color:var(--gold);}
-.sticker-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:8px;}
-.sticker-item{aspect-ratio:1;border-radius:6px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;border:1px solid transparent;transition:all .2s;}
-.sticker-item:hover{border-color:var(--gold);background:var(--surface3);}
+/* 요소 추가 */
+.add-btns{display:flex;flex-direction:column;gap:5px;}
+.add-btn{width:100%;padding:9px 12px;background:var(--sur2);border:1px solid var(--bd);border-radius:8px;color:var(--tx2);font-family:inherit;font-size:12px;cursor:pointer;text-align:left;transition:all .2s;display:flex;align-items:center;gap:8px;}
+.add-btn:hover{border-color:var(--gold);color:var(--gold);}
+.add-btn-icon{font-size:16px;width:20px;text-align:center;}
 
-/* 배경 */
-.color-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;}
-.bg-color{width:28px;height:28px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all .2s;}
-.bg-color:hover,.bg-color.active{border-color:var(--gold);transform:scale(1.1);}
-.gradient-list{display:flex;flex-direction:column;gap:4px;margin-top:8px;}
-.grad-item{height:28px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all .2s;}
-.grad-item:hover,.grad-item.active{border-color:var(--gold);}
+/* 폰트 */
+.font-list{display:flex;flex-direction:column;gap:4px;}
+.font-item{padding:8px 10px;border-radius:6px;cursor:pointer;font-size:13px;border:1px solid transparent;transition:all .2s;color:var(--tx2);}
+.font-item:hover,.font-item.active{background:var(--sur2);border-color:var(--bd);color:var(--tx);}
 
-/* CANVAS AREA */
-.canvas-area{flex:1;display:flex;align-items:center;justify-content:center;background:var(--bg);position:relative;overflow:hidden;}
-.canvas-bg-pattern{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.04) 1px,transparent 1px);background-size:24px 24px;}
-.canvas-container{position:relative;box-shadow:0 32px 80px rgba(0,0,0,.8);}
-.canvas-frame{border-radius:24px;overflow:hidden;position:relative;}
-#designCanvas{display:block;cursor:default;}
-.canvas-overlay{position:absolute;inset:0;pointer-events:none;}
+/* 스티커 */
+.sticker-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;}
+.sticker-item{aspect-ratio:1;border-radius:6px;background:var(--sur2);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;border:1px solid transparent;transition:all .2s;}
+.sticker-item:hover{border-color:var(--gold);}
+
+/* 색상 */
+.color-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.color-dot{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .2s;}
+.color-dot:hover,.color-dot.active{border-color:var(--gold);transform:scale(1.1);}
+
+/* ── CANVAS AREA ── */
+.canvas-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0a0a0a;position:relative;overflow:hidden;}
+.canvas-bg{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.025) 1px,transparent 1px);background-size:20px 20px;}
+
+/* 상품 프리뷰 컨테이너 */
+.product-stage{position:relative;display:flex;align-items:center;justify-content:center;}
+.product-svg-wrap{position:relative;}
+
+/* 디자인 드롭존 표시 */
+.design-zone{position:absolute;border:2px dashed rgba(212,168,67,.4);border-radius:4px;background:rgba(212,168,67,.03);pointer-events:none;transition:all .3s;}
+.design-zone.hint{border-color:rgba(212,168,67,.6);background:rgba(212,168,67,.06);animation:pulse 1.5s ease infinite;}
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+
+/* 디자인 캔버스 (상품 위에 오버레이) */
+#designOverlay{position:absolute;top:0;left:0;cursor:default;}
 
 /* 줌 컨트롤 */
-.zoom-ctrl{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:4px 12px;}
-.zoom-btn{background:none;border:none;color:var(--text2);cursor:pointer;font-size:18px;padding:2px 6px;transition:color .2s;}
+.zoom-bar{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:var(--sur);border:1px solid var(--bd2);border-radius:20px;padding:4px 12px;display:flex;align-items:center;gap:8px;}
+.zoom-btn{background:none;border:none;color:var(--tx2);cursor:pointer;font-size:18px;padding:2px 6px;transition:color .2s;}
 .zoom-btn:hover{color:var(--gold);}
-.zoom-label{font-size:12px;color:var(--text3);min-width:36px;text-align:center;}
+.zoom-lbl{font-size:12px;color:var(--tx3);min-width:36px;text-align:center;}
 
-/* RIGHT PANEL */
-.right-panel{width:220px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;}
-.rp-section{padding:12px;border-bottom:1px solid var(--border);}
-.rp-title{font-size:10px;color:var(--text3);letter-spacing:1px;margin-bottom:10px;}
+/* 상품 변경 힌트 */
+.stage-label{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.7);border:1px solid var(--bd2);border-radius:20px;padding:5px 14px;font-size:11px;color:var(--tx2);white-space:nowrap;}
 
-/* 속성 편집 */
-.prop-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.prop-label{font-size:11px;color:var(--text3);}
-.prop-input{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:5px 8px;color:var(--text);font-family:inherit;font-size:12px;outline:none;width:100px;transition:border .2s;}
+/* ── RIGHT PANEL ── */
+.rpanel{width:var(--rpanel);background:var(--sur);border-left:1px solid var(--bd);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;}
+.rpanel::-webkit-scrollbar{width:3px;}
+.rpanel::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px;}
+.rp-sec{padding:12px;border-bottom:1px solid var(--bd);}
+.rp-title{font-size:10px;color:var(--tx3);letter-spacing:1px;margin-bottom:8px;}
+.prop-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
+.prop-lbl{font-size:11px;color:var(--tx3);}
+.prop-input{background:var(--sur2);border:1px solid var(--bd2);border-radius:5px;padding:4px 7px;color:var(--tx);font-family:inherit;font-size:12px;outline:none;width:80px;transition:border .2s;}
 .prop-input:focus{border-color:var(--gold);}
-.prop-input.sm{width:60px;}
-.prop-color-input{width:32px;height:24px;border-radius:4px;border:1px solid var(--border2);cursor:pointer;padding:2px;}
-.align-btns{display:flex;gap:4px;}
-.align-btn{background:none;border:1px solid var(--border);border-radius:4px;padding:4px 6px;color:var(--text3);cursor:pointer;font-size:12px;transition:all .2s;}
-.align-btn:hover,.align-btn.active{border-color:var(--gold);color:var(--gold);}
-.slider-row{display:flex;align-items:center;gap:8px;}
-.prop-slider{flex:1;accent-color:var(--gold);}
-.slider-val{font-size:11px;color:var(--text3);min-width:28px;text-align:right;}
+.prop-input.sm{width:52px;}
+.prop-color{width:28px;height:22px;border-radius:4px;border:1px solid var(--bd2);cursor:pointer;padding:2px;}
+.range-row{display:flex;align-items:center;gap:6px;margin-bottom:7px;}
+.prop-range{flex:1;accent-color:var(--gold);}
+.range-val{font-size:11px;color:var(--tx3);min-width:28px;text-align:right;}
+.align-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;}
+.align-btn{background:var(--sur2);border:1px solid var(--bd);border-radius:5px;padding:5px;cursor:pointer;font-size:11px;color:var(--tx2);transition:all .2s;text-align:center;}
+.align-btn:hover{border-color:var(--gold);color:var(--gold);}
 
-/* 레이어 패널 */
-.layer-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;cursor:pointer;transition:all .2s;font-size:12px;color:var(--text2);}
-.layer-item:hover,.layer-item.active{background:var(--surface2);color:var(--text);}
-.layer-icon{font-size:14px;width:18px;text-align:center;}
-.layer-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.layer-vis{font-size:12px;cursor:pointer;color:var(--text3);}
+/* 레이어 */
+.layer-item{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:6px;cursor:pointer;transition:all .2s;font-size:12px;color:var(--tx2);}
+.layer-item:hover,.layer-item.active{background:var(--sur2);color:var(--tx);}
+.layer-ic{font-size:13px;width:16px;text-align:center;}
 
-/* 선택 핸들 */
-.sel-handle{position:absolute;width:8px;height:8px;background:var(--gold);border:1px solid #fff;border-radius:1px;cursor:nwse-resize;}
+/* ── 모달 ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.overlay.open{display:flex;}
+.modal{background:var(--sur);border:1px solid var(--bd2);border-radius:18px;width:90%;max-width:560px;overflow:hidden;}
+.modal-hd{padding:20px 24px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:16px;}
+.modal-close{background:none;border:none;color:var(--tx3);font-size:22px;cursor:pointer;}
+.modal-bd{padding:24px;}
+.modal-ft{padding:16px 24px;border-top:1px solid var(--bd);display:flex;gap:8px;justify-content:flex-end;}
+.btn-modal{border:1px solid var(--bd2);background:none;color:var(--tx2);padding:9px 20px;border-radius:8px;cursor:pointer;font-size:13px;font-family:inherit;transition:all .2s;}
+.btn-modal:hover{border-color:var(--gold);color:var(--gold);}
+.btn-modal.primary{background:var(--gold);border-color:var(--gold);color:#000;font-weight:700;}
+.btn-modal.primary:hover{background:var(--glt);}
 
-/* TOAST */
-.toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--surface2);border:1px solid rgba(212,168,67,.3);border-radius:12px;padding:12px 18px;font-size:13px;transform:translateY(60px);opacity:0;transition:all .3s;display:flex;align-items:center;gap:8px;}
+/* 주문 확인 */
+.order-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--bd);color:var(--tx2);}
+.order-total{display:flex;justify-content:space-between;font-size:16px;font-weight:700;padding-top:12px;margin-top:4px;}
+.order-price{color:var(--gold);}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--sur2);border:1px solid rgba(212,168,67,.3);border-radius:10px;padding:12px 18px;font-size:13px;transform:translateY(60px);opacity:0;transition:all .35s;display:flex;align-items:center;gap:8px;}
 .toast.show{transform:translateY(0);opacity:1;}
 
-/* 모달 */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1000;align-items:center;justify-content:center;}
-.overlay.open{display:flex;}
-.modal{background:var(--surface);border:1px solid var(--border2);border-radius:20px;width:90%;max-width:500px;overflow:hidden;}
-.modal-hd{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:16px;font-weight:700;}
-.modal-bd{padding:24px;}
-.modal-close{background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;}
-.order-summary{background:var(--surface2);border-radius:10px;padding:16px;margin-bottom:16px;}
-.order-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;color:var(--text2);}
-.order-total{display:flex;justify-content:space-between;font-size:16px;font-weight:700;padding-top:12px;border-top:1px solid var(--border2);margin-top:8px;}
-.order-price{color:var(--gold);}
+/* ── 드래그 선택 핸들 ── */
+.sel-box{position:absolute;border:2px solid var(--gold);pointer-events:none;border-radius:2px;}
+.handle{position:absolute;width:8px;height:8px;background:var(--gold);border:1px solid #000;border-radius:1px;}
 </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
+<!-- TOPBAR -->
 <div class="topbar">
-  <div class="tb-left">
+  <div style="display:flex;align-items:center;gap:10px;">
     <span class="tb-logo">MOMENTO</span>
-    <div class="tb-sep"></div>
-    <span class="tb-product" id="tbProduct">포토 폰케이스 편집기</span>
+    <span class="tb-product" id="tbProduct">폰케이스 편집기</span>
   </div>
   <div class="tb-center">
-    <button class="tb-tool-btn active" id="toolSelect" onclick="setTool('select')">↖ 선택</button>
-    <button class="tb-tool-btn" id="toolText" onclick="setTool('text')">T 텍스트</button>
-    <button class="tb-tool-btn" id="toolShape" onclick="setTool('shape')">◻ 도형</button>
-    <button class="tb-tool-btn" onclick="undo()">↩ 실행취소</button>
-    <button class="tb-tool-btn" onclick="redo()">↪ 다시실행</button>
+    <button class="tool-btn active" id="toolSelect" onclick="setTool('select')">↖ 선택</button>
+    <button class="tool-btn" id="toolText" onclick="setTool('text')">T 텍스트</button>
+    <button class="tool-btn" id="toolShape" onclick="setTool('shape')">◻ 도형</button>
+    <div class="tool-sep"></div>
+    <button class="tool-btn" onclick="undo()" title="실행취소 (Ctrl+Z)">↩ 취소</button>
+    <button class="tool-btn" onclick="redo()" title="다시실행 (Ctrl+Y)">↪ 복원</button>
+    <div class="tool-sep"></div>
+    <button class="tool-btn" onclick="deleteSelected()" title="삭제">🗑 삭제</button>
   </div>
   <div class="tb-right">
-    <button class="btn-save" onclick="saveDesign()">💾 저장</button>
-    <button class="btn-save" onclick="downloadDesign()">⬇ 다운로드</button>
+    <button class="btn-tb" onclick="saveDesign()">💾 저장</button>
+    <button class="btn-tb" onclick="downloadDesign()">⬇ 다운로드</button>
     <button class="btn-order" onclick="openOrderModal()">✅ 주문하기</button>
   </div>
 </div>
 
-<div class="editor-wrap">
+<div class="workspace">
 
-  <!-- LEFT PANEL -->
-  <div class="left-panel">
-    <div class="panel-tabs">
-      <div class="ptab active" onclick="switchPanel('template',this)">템플릿</div>
-      <div class="ptab" onclick="switchPanel('text',this)">텍스트</div>
-      <div class="ptab" onclick="switchPanel('image',this)">이미지</div>
-      <div class="ptab" onclick="switchPanel('bg',this)">배경</div>
+  <!-- ── LEFT PANEL ── -->
+  <div class="lpanel">
+    <div class="lp-tabs">
+      <div class="lp-tab active" onclick="switchLP('product',this)">상품</div>
+      <div class="lp-tab" onclick="switchLP('element',this)">요소</div>
+      <div class="lp-tab" onclick="switchLP('text',this)">텍스트</div>
+      <div class="lp-tab" onclick="switchLP('image',this)">이미지</div>
+      <div class="lp-tab" onclick="switchLP('sticker',this)">스티커</div>
     </div>
+    <div class="lp-body">
 
-    <!-- 템플릿 패널 -->
-    <div class="panel-section" id="panel-template">
-      <div class="panel-title">템플릿 선택</div>
-      <div class="tmpl-list" id="tmplList"></div>
-    </div>
-
-    <!-- 텍스트 패널 -->
-    <div class="panel-section" id="panel-text" style="display:none">
-      <div class="panel-title">텍스트 추가</div>
-      <div class="add-text-btns">
-        <button class="add-text-btn" onclick="addText('제목 텍스트','bold 28px','Noto Sans KR')">+ 제목 추가</button>
-        <button class="add-text-btn" onclick="addText('부제목 텍스트','500 18px','Noto Sans KR')">+ 부제목 추가</button>
-        <button class="add-text-btn" onclick="addText('본문 텍스트','14px','Noto Sans KR')">+ 본문 추가</button>
-        <button class="add-text-btn" onclick="addText('날짜 / 2025','bold 16px','Playfair Display')">+ 날짜 추가</button>
+      <!-- 상품 패널 -->
+      <div id="lp-product">
+        <div class="lp-section-title">상품 선택</div>
+        <div class="product-list" id="productList"></div>
+        <div class="lp-section-title" style="margin-top:16px">면 선택</div>
+        <div class="view-tabs" id="viewTabs"></div>
+        <div class="lp-section-title">배경색</div>
+        <div class="color-grid" id="bgColorGrid"></div>
+        <div style="margin-top:8px;">
+          <input type="color" value="#1a1a1a" id="bgCustomColor" onchange="setBgColor(this.value)"
+            style="width:100%;height:32px;border:1px solid var(--bd2);border-radius:6px;cursor:pointer;padding:2px;background:none;">
+        </div>
       </div>
-      <div class="panel-title" style="margin-top:14px;">폰트</div>
-      <div class="font-list">
-        <div class="font-item active" style="font-family:'Noto Sans KR'" onclick="applyFont('Noto Sans KR',this)">Noto Sans KR</div>
-        <div class="font-item" style="font-family:'Playfair Display'" onclick="applyFont('Playfair Display',this)">Playfair Display</div>
-        <div class="font-item" style="font-family:serif" onclick="applyFont('serif',this)">Serif 기본체</div>
-        <div class="font-item" style="font-family:monospace" onclick="applyFont('monospace',this)">Monospace</div>
-      </div>
-    </div>
 
-    <!-- 이미지 패널 -->
-    <div class="panel-section" id="panel-image" style="display:none">
-      <div class="panel-title">이미지 업로드</div>
-      <div class="img-upload-area" onclick="document.getElementById('imgUpload').click()">
-        <div style="font-size:24px;margin-bottom:4px;">🖼️</div>
-        <div style="font-size:11px;color:var(--text3)">클릭하여 사진 업로드<br>JPG · PNG · WEBP</div>
+      <!-- 요소 패널 -->
+      <div id="lp-element" style="display:none">
+        <div class="lp-section-title">요소 추가</div>
+        <div class="add-btns">
+          <button class="add-btn" onclick="addText('제목 텍스트','bold 28px','Noto Sans KR')"><span class="add-btn-icon">T</span><div><div style="font-weight:700">제목 텍스트</div><div style="font-size:10px;color:var(--tx3)">크고 굵은 텍스트</div></div></button>
+          <button class="add-btn" onclick="addText('부제목','500 18px','Noto Sans KR')"><span class="add-btn-icon">T</span><div><div style="font-weight:500">부제목 텍스트</div><div style="font-size:10px;color:var(--tx3)">중간 크기 텍스트</div></div></button>
+          <button class="add-btn" onclick="addText('본문 텍스트','14px','Noto Sans KR')"><span class="add-btn-icon">T</span><div><div>본문 텍스트</div><div style="font-size:10px;color:var(--tx3)">작은 본문 텍스트</div></div></button>
+          <button class="add-btn" onclick="addText('2025','bold 22px','Playfair Display',true)"><span class="add-btn-icon" style="font-family:'Playfair Display',serif">D</span><div><div>날짜 / 이니셜</div><div style="font-size:10px;color:var(--tx3)">Playfair Display 서체</div></div></button>
+        </div>
+        <div class="lp-section-title">도형</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;">
+          <button class="add-btn" style="flex-direction:column;align-items:center;padding:12px 6px;" onclick="addShape('rect')"><div style="font-size:22px">▭</div><div style="font-size:10px;margin-top:3px">직사각형</div></button>
+          <button class="add-btn" style="flex-direction:column;align-items:center;padding:12px 6px;" onclick="addShape('circle')"><div style="font-size:22px">●</div><div style="font-size:10px;margin-top:3px">원형</div></button>
+          <button class="add-btn" style="flex-direction:column;align-items:center;padding:12px 6px;" onclick="addShape('line')"><div style="font-size:22px">—</div><div style="font-size:10px;margin-top:3px">선</div></button>
+        </div>
       </div>
-      <input type="file" id="imgUpload" style="display:none" accept="image/*" onchange="addImageFromFile(this)">
-      <div class="panel-title" style="margin-top:14px;">스티커</div>
-      <div class="sticker-grid" id="stickerGrid"></div>
-    </div>
 
-    <!-- 배경 패널 -->
-    <div class="panel-section" id="panel-bg" style="display:none">
-      <div class="panel-title">단색 배경</div>
-      <div class="color-grid" id="bgColorGrid"></div>
-      <div class="panel-title" style="margin-top:12px;">그라데이션</div>
-      <div class="gradient-list" id="gradientList"></div>
-      <div class="panel-title" style="margin-top:12px;">커스텀 색상</div>
-      <input type="color" value="#1a1a1a" onchange="setBgColor(this.value)" style="width:100%;height:32px;border:1px solid var(--border2);border-radius:6px;cursor:pointer;background:none;padding:2px;">
+      <!-- 텍스트 패널 -->
+      <div id="lp-text" style="display:none">
+        <div class="lp-section-title">폰트</div>
+        <div class="font-list" id="fontList"></div>
+        <div class="lp-section-title">텍스트 색상</div>
+        <div class="color-grid" id="textColorGrid"></div>
+      </div>
+
+      <!-- 이미지 패널 -->
+      <div id="lp-image" style="display:none">
+        <div class="lp-section-title">이미지 업로드</div>
+        <div style="border:2px dashed var(--bd2);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:all .2s;" onclick="document.getElementById('imgUpload').click()" onmouseenter="this.style.borderColor='var(--gold)'" onmouseleave="this.style.borderColor='var(--bd2)'">
+          <div style="font-size:28px;margin-bottom:6px;">🖼️</div>
+          <div style="font-size:12px;color:var(--tx3);">클릭하여 사진 업로드<br><span style="font-size:10px">JPG · PNG · WEBP</span></div>
+        </div>
+        <input type="file" id="imgUpload" style="display:none" accept="image/*" onchange="addImageFromFile(this)">
+        <div class="lp-section-title" style="margin-top:14px;">최근 업로드</div>
+        <div id="recentImgs" style="display:grid;grid-template-columns:1fr 1fr;gap:5px;"></div>
+      </div>
+
+      <!-- 스티커 패널 -->
+      <div id="lp-sticker" style="display:none">
+        <div class="lp-section-title">감성 스티커</div>
+        <div class="sticker-grid" id="stickerGrid1"></div>
+        <div class="lp-section-title">자연 & 동물</div>
+        <div class="sticker-grid" id="stickerGrid2"></div>
+        <div class="lp-section-title">기호 & 특수</div>
+        <div class="sticker-grid" id="stickerGrid3"></div>
+      </div>
     </div>
   </div>
 
-  <!-- CANVAS AREA -->
-  <div class="canvas-area">
-    <div class="canvas-bg-pattern"></div>
-    <div class="canvas-container" id="canvasContainer">
-      <div class="canvas-frame" id="canvasFrame">
-        <canvas id="designCanvas" width="400" height="400"></canvas>
-      </div>
+  <!-- ── CANVAS AREA ── -->
+  <div class="canvas-area" id="canvasArea">
+    <div class="canvas-bg"></div>
+    <div class="stage-label" id="stageLabel">📱 폰케이스 — 앞면</div>
+    <div class="product-stage" id="productStage">
+      <!-- 상품 SVG와 디자인 캔버스가 여기 렌더링 -->
     </div>
-    <div class="zoom-ctrl">
+    <div class="zoom-bar">
       <button class="zoom-btn" onclick="zoom(-0.1)">−</button>
-      <span class="zoom-label" id="zoomLabel">100%</span>
+      <span class="zoom-lbl" id="zoomLbl">100%</span>
       <button class="zoom-btn" onclick="zoom(0.1)">+</button>
-      <button class="zoom-btn" onclick="resetZoom()" title="맞추기">⊡</button>
+      <button class="zoom-btn" onclick="fitZoom()" title="화면에 맞추기">⊡</button>
     </div>
   </div>
 
-  <!-- RIGHT PANEL -->
-  <div class="right-panel">
-    <!-- 요소 속성 -->
-    <div class="rp-section">
+  <!-- ── RIGHT PANEL ── -->
+  <div class="rpanel">
+    <div class="rp-sec">
       <div class="rp-title">요소 속성</div>
-      <div id="propPanel">
-        <div style="font-size:12px;color:var(--text3);text-align:center;padding:16px 0;">요소를 선택하세요</div>
-      </div>
+      <div id="propPanel"><div style="font-size:12px;color:var(--tx3);text-align:center;padding:16px 0;">요소를 선택하세요</div></div>
     </div>
-
-    <!-- 정렬 -->
-    <div class="rp-section">
+    <div class="rp-sec">
       <div class="rp-title">정렬</div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;">
-        <button class="align-btn" onclick="alignEl('left')" title="왼쪽">⬜◻◻</button>
-        <button class="align-btn" onclick="alignEl('center-h')" title="가운데">◻⬜◻</button>
-        <button class="align-btn" onclick="alignEl('right')" title="오른쪽">◻◻⬜</button>
-        <button class="align-btn" onclick="alignEl('top')" title="위">⬆</button>
-        <button class="align-btn" onclick="alignEl('center-v')" title="중앙">↕</button>
-        <button class="align-btn" onclick="alignEl('bottom')" title="아래">⬇</button>
+      <div class="align-grid">
+        <button class="align-btn" onclick="alignEl('left')" title="왼쪽 정렬">◀◻</button>
+        <button class="align-btn" onclick="alignEl('center-h')" title="가운데">◀▶</button>
+        <button class="align-btn" onclick="alignEl('right')" title="오른쪽">◻▶</button>
+        <button class="align-btn" onclick="alignEl('top')" title="위">▲◻</button>
+        <button class="align-btn" onclick="alignEl('center-v')" title="중앙">▲▼</button>
+        <button class="align-btn" onclick="alignEl('bottom')" title="아래">◻▼</button>
       </div>
     </div>
-
-    <!-- 레이어 -->
-    <div class="rp-section" style="flex:1">
+    <div class="rp-sec" style="flex:1">
       <div class="rp-title">레이어</div>
       <div id="layerList"></div>
     </div>
@@ -258,326 +300,551 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <!-- 주문 모달 -->
 <div class="overlay" id="orderOverlay" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="modal">
-    <div class="modal-hd">
-      주문 최종 확인
-      <button class="modal-close" onclick="document.getElementById('orderOverlay').classList.remove('open')">✕</button>
-    </div>
+    <div class="modal-hd">주문 최종 확인<button class="modal-close" onclick="document.getElementById('orderOverlay').classList.remove('open')">✕</button></div>
     <div class="modal-bd">
-      <div style="text-align:center;margin-bottom:16px;">
-        <canvas id="previewCanvas" width="200" height="200" style="border-radius:12px;border:1px solid var(--border2);"></canvas>
+      <div style="text-align:center;margin-bottom:18px;">
+        <canvas id="previewCanvas" width="200" height="200" style="border-radius:12px;border:1px solid var(--bd2);"></canvas>
+        <div style="font-size:12px;color:var(--tx3);margin-top:6px;">완성된 디자인 미리보기</div>
       </div>
-      <div class="order-summary">
-        <div class="order-row"><span>상품</span><span id="orderProduct">포토 폰케이스</span></div>
-        <div class="order-row"><span>옵션</span><span id="orderOption">아이폰 15 Pro / 투명</span></div>
+      <div style="background:var(--sur2);border-radius:10px;padding:14px;margin-bottom:14px;">
+        <div class="order-row"><span>상품</span><span id="omProduct">폰케이스</span></div>
+        <div class="order-row"><span>옵션</span><span id="omOption">아이폰 15 Pro / 투명</span></div>
         <div class="order-row"><span>수량</span><span>1개</span></div>
         <div class="order-row"><span>제작기간</span><span>시안 확인 후 2~3일</span></div>
-        <div class="order-total"><span>합계</span><span class="order-price">₩12,900</span></div>
+        <div class="order-total"><span>합계</span><span class="order-price" id="omPrice">₩12,900</span></div>
       </div>
-      <div style="font-size:12px;color:var(--text3);margin-bottom:16px;line-height:1.6;">✅ 주문 후 담당자가 시안을 발송해드려요<br>✅ 시안 확인 후 최종 제작 진행 (수정 1회 무료)</div>
-      <button style="width:100%;padding:14px;background:var(--gold);border:none;color:#000;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;" onclick="submitOrder()">주문하기 →</button>
+      <div style="font-size:12px;color:var(--tx3);line-height:1.7;">✅ 주문 후 담당 디자이너가 시안을 발송해드려요<br>✅ 시안 확인 후 최종 제작 (수정 1회 무료)</div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn-modal" onclick="document.getElementById('orderOverlay').classList.remove('open')">취소</button>
+      <button class="btn-modal primary" onclick="submitOrder()">주문하기 →</button>
     </div>
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ── 상태 ──
+// ── URL 파라미터 ──
 const params = new URLSearchParams(location.search);
 const productId = params.get('product') || 'p1';
 const templateId = params.get('template') || 't1';
-const modelParam = params.get('model') || '아이폰 15 Pro';
-const materialParam = params.get('material') || '투명';
+const modelParam = decodeURIComponent(params.get('model') || '아이폰 15 Pro');
+const materialParam = decodeURIComponent(params.get('material') || '투명');
+const nameParam = decodeURIComponent(params.get('name') || '폰케이스');
 
+// ── 상품 정의 (실제 상품 모양 + 디자인 영역) ──
+const PRODUCTS = {
+  phone: {
+    name: '폰케이스', emoji: '📱',
+    views: ['앞면', '뒷면'],
+    // SVG로 실제 폰케이스 모양 그리기
+    getSVG: (w, h) => `
+      <svg width="${w}" height="${h}" viewBox="0 0 280 560" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="caseGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#2a2a2a"/>
+            <stop offset="100%" stop-color="#1a1a1a"/>
+          </linearGradient>
+          <clipPath id="caseClip">
+            <rect x="10" y="10" width="260" height="540" rx="36"/>
+          </clipPath>
+        </defs>
+        <!-- 케이스 외곽 그림자 -->
+        <rect x="8" y="8" width="264" height="544" rx="38" fill="rgba(0,0,0,.5)"/>
+        <!-- 케이스 본체 -->
+        <rect x="10" y="10" width="260" height="540" rx="36" fill="url(#caseGrad)"/>
+        <!-- 케이스 테두리 -->
+        <rect x="10" y="10" width="260" height="540" rx="36" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1.5"/>
+        <!-- 카메라 구멍 -->
+        <rect x="90" y="22" width="100" height="14" rx="7" fill="#0a0a0a"/>
+        <circle cx="140" cy="29" r="4" fill="#111"/>
+        <!-- 버튼들 -->
+        <rect x="8" y="120" width="4" height="40" rx="2" fill="#333"/>
+        <rect x="8" y="170" width="4" height="40" rx="2" fill="#333"/>
+        <rect x="268" y="150" width="4" height="55" rx="2" fill="#333"/>
+        <!-- 화면 영역 (디자인이 들어갈 곳 표시) -->
+        <rect x="20" y="50" width="240" height="490" rx="24" fill="rgba(212,168,67,.03)" stroke="rgba(212,168,67,.15)" stroke-width="1" stroke-dasharray="6 4"/>
+      </svg>`,
+    // 디자인이 들어갈 영역 (SVG 좌표 기준, viewBox 280x560)
+    designZone: { x: 20, y: 50, w: 240, h: 490 },
+    canvasW: 400, canvasH: 800,
+    price: '12,900'
+  },
+  mug: {
+    name: '머그컵', emoji: '☕',
+    views: ['앞면', '뒷면', '핸들'],
+    getSVG: (w, h) => `
+      <svg width="${w}" height="${h}" viewBox="0 0 360 400" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="mugGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#2d2d2d"/>
+            <stop offset="50%" stop-color="#1e1e1e"/>
+            <stop offset="100%" stop-color="#2d2d2d"/>
+          </linearGradient>
+          <linearGradient id="rimGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#444"/>
+            <stop offset="100%" stop-color="#222"/>
+          </linearGradient>
+        </defs>
+        <!-- 컵 몸체 그림자 -->
+        <ellipse cx="160" cy="375" rx="115" ry="12" fill="rgba(0,0,0,.4)"/>
+        <!-- 컵 몸체 -->
+        <path d="M50 80 Q45 360 60 370 L260 370 Q275 360 270 80 Z" fill="url(#mugGrad)"/>
+        <!-- 컵 테두리 -->
+        <path d="M50 80 Q45 360 60 370 L260 370 Q275 360 270 80 Z" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1.5"/>
+        <!-- 컵 위 테두리 (림) -->
+        <ellipse cx="160" cy="80" rx="110" ry="20" fill="url(#rimGrad)"/>
+        <ellipse cx="160" cy="80" rx="110" ry="20" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+        <!-- 내부 (위에서 보이는 부분) -->
+        <ellipse cx="160" cy="80" rx="98" ry="16" fill="#111"/>
+        <!-- 컵 바닥 -->
+        <ellipse cx="160" cy="368" rx="98" ry="12" fill="#1a1a1a"/>
+        <!-- 핸들 -->
+        <path d="M270 130 Q330 130 330 200 Q330 270 270 270" fill="none" stroke="#2d2d2d" stroke-width="22" stroke-linecap="round"/>
+        <path d="M270 130 Q330 130 330 200 Q330 270 270 270" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- 디자인 영역 표시 -->
+        <path d="M60 120 Q55 340 70 355 L250 355 Q265 340 260 120 Z" fill="rgba(212,168,67,.04)" stroke="rgba(212,168,67,.2)" stroke-width="1" stroke-dasharray="6 4"/>
+      </svg>`,
+    designZone: { x: 60, y: 120, w: 200, h: 235 },
+    canvasW: 360, canvasH: 400,
+    price: '15,900'
+  },
+  hoodie: {
+    name: '후드티', emoji: '👕',
+    views: ['앞면', '뒷면', '소매'],
+    getSVG: (w, h) => `
+      <svg width="${w}" height="${h}" viewBox="0 0 500 560" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hoodieGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#222"/>
+            <stop offset="100%" stop-color="#1a1a1a"/>
+          </linearGradient>
+        </defs>
+        <!-- 그림자 -->
+        <ellipse cx="250" cy="545" rx="160" ry="10" fill="rgba(0,0,0,.4)"/>
+        <!-- 후드티 몸체 -->
+        <!-- 왼쪽 소매 -->
+        <path d="M60 120 L20 280 Q18 295 35 298 L100 298 Q115 295 118 280 L130 160 Z" fill="url(#hoodieGrad)"/>
+        <path d="M60 120 L20 280 Q18 295 35 298 L100 298 Q115 295 118 280 L130 160 Z" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1"/>
+        <!-- 오른쪽 소매 -->
+        <path d="M440 120 L480 280 Q482 295 465 298 L400 298 Q385 295 382 280 L370 160 Z" fill="url(#hoodieGrad)"/>
+        <path d="M440 120 L480 280 Q482 295 465 298 L400 298 Q385 295 382 280 L370 160 Z" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1"/>
+        <!-- 몸통 -->
+        <path d="M130 160 L100 530 Q100 545 115 545 L385 545 Q400 545 400 530 L370 160 Z" fill="url(#hoodieGrad)"/>
+        <path d="M130 160 L100 530 Q100 545 115 545 L385 545 Q400 545 400 530 L370 160 Z" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1"/>
+        <!-- 후드 -->
+        <path d="M60 120 Q100 20 250 15 Q400 20 440 120 L380 160 Q310 80 250 80 Q190 80 120 160 Z" fill="url(#hoodieGrad)"/>
+        <path d="M60 120 Q100 20 250 15 Q400 20 440 120 L380 160 Q310 80 250 80 Q190 80 120 160 Z" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1"/>
+        <!-- 후드 안쪽 -->
+        <path d="M150 140 Q200 70 250 68 Q300 70 350 140 L340 155 Q295 90 250 88 Q205 90 160 155 Z" fill="#111"/>
+        <!-- 후드 끈 -->
+        <path d="M220 145 L205 280" stroke="rgba(255,255,255,.15)" stroke-width="3" stroke-linecap="round"/>
+        <path d="M280 145 L295 280" stroke="rgba(255,255,255,.15)" stroke-width="3" stroke-linecap="round"/>
+        <!-- 주머니 -->
+        <path d="M150 360 L145 490 L355 490 L350 360 Q300 350 250 350 Q200 350 150 360 Z" fill="rgba(0,0,0,.2)" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+        <!-- 디자인 영역 (가슴 왼쪽) -->
+        <rect x="155" y="175" width="185" height="155" rx="8" fill="rgba(212,168,67,.04)" stroke="rgba(212,168,67,.2)" stroke-width="1" stroke-dasharray="6 4"/>
+      </svg>`,
+    designZone: { x: 155, y: 175, w: 185, h: 155 },
+    canvasW: 500, canvasH: 560,
+    price: '38,900'
+  },
+  totebag: {
+    name: '토트백', emoji: '👜',
+    views: ['앞면', '뒷면'],
+    getSVG: (w, h) => `
+      <svg width="${w}" height="${h}" viewBox="0 0 420 500" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="bagGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#c8b89a"/>
+            <stop offset="100%" stop-color="#b5a485"/>
+          </linearGradient>
+        </defs>
+        <!-- 그림자 -->
+        <ellipse cx="210" cy="488" rx="130" ry="8" fill="rgba(0,0,0,.3)"/>
+        <!-- 손잡이 왼쪽 -->
+        <path d="M130 80 Q125 20 165 18 Q205 16 205 80" fill="none" stroke="#8b7355" stroke-width="14" stroke-linecap="round"/>
+        <path d="M130 80 Q125 20 165 18 Q205 16 205 80" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- 손잡이 오른쪽 -->
+        <path d="M215 80 Q215 16 255 18 Q295 20 290 80" fill="none" stroke="#8b7355" stroke-width="14" stroke-linecap="round"/>
+        <path d="M215 80 Q215 16 255 18 Q295 20 290 80" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- 가방 본체 -->
+        <path d="M50 90 Q40 460 55 475 L365 475 Q380 460 370 90 Z" fill="url(#bagGrad)"/>
+        <path d="M50 90 Q40 460 55 475 L365 475 Q380 460 370 90 Z" fill="none" stroke="rgba(0,0,0,.15)" stroke-width="1.5"/>
+        <!-- 상단 접힌 부분 -->
+        <path d="M50 90 L370 90 L365 115 L55 115 Z" fill="rgba(0,0,0,.08)"/>
+        <!-- 바닥 강화 -->
+        <path d="M55 450 Q55 475 70 475 L350 475 Q365 475 365 450 L55 450 Z" fill="rgba(0,0,0,.12)"/>
+        <!-- 솔기선 -->
+        <line x1="210" y1="90" x2="210" y2="475" stroke="rgba(0,0,0,.1)" stroke-width="1" stroke-dasharray="8 4"/>
+        <!-- 디자인 영역 -->
+        <rect x="80" y="140" width="260" height="260" rx="8" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.25)" stroke-width="1" stroke-dasharray="6 4"/>
+      </svg>`,
+    designZone: { x: 80, y: 140, w: 260, h: 260 },
+    canvasW: 420, canvasH: 500,
+    price: '18,900'
+  },
+  photobook: {
+    name: '포토북', emoji: '📖',
+    views: ['표지', '내지'],
+    getSVG: (w, h) => `
+      <svg width="${w}" height="${h}" viewBox="0 0 500 380" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="bookGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#2a2a2a"/>
+            <stop offset="100%" stop-color="#1e1e1e"/>
+          </linearGradient>
+        </defs>
+        <!-- 그림자 -->
+        <ellipse cx="250" cy="370" rx="200" ry="8" fill="rgba(0,0,0,.4)"/>
+        <!-- 뒷면 페이지 -->
+        <rect x="55" y="20" width="390" height="340" rx="4" fill="#333" transform="rotate(2 250 190)"/>
+        <rect x="52" y="18" width="390" height="340" rx="4" fill="#2a2a2a" transform="rotate(1 250 190)"/>
+        <!-- 책 본체 -->
+        <rect x="50" y="20" width="390" height="340" rx="4" fill="url(#bookGrad)"/>
+        <!-- 책등 -->
+        <rect x="50" y="20" width="28" height="340" rx="4" fill="#111"/>
+        <rect x="50" y="20" width="28" height="340" rx="0" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+        <!-- 책등 장식선 -->
+        <line x1="60" y1="40" x2="60" y2="340" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+        <!-- 표지 -->
+        <rect x="78" y="20" width="362" height="340" rx="0" fill="#1e1e1e"/>
+        <rect x="78" y="20" width="362" height="340" rx="0" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+        <!-- 페이지 측면 -->
+        <rect x="442" y="22" width="6" height="336" fill="#e8e5e0"/>
+        <!-- 디자인 영역 (표지) -->
+        <rect x="98" y="40" width="322" height="300" rx="4" fill="rgba(212,168,67,.04)" stroke="rgba(212,168,67,.2)" stroke-width="1" stroke-dasharray="6 4"/>
+      </svg>`,
+    designZone: { x: 98, y: 40, w: 322, h: 300 },
+    canvasW: 500, canvasH: 380,
+    price: '24,900'
+  },
+  sticker: {
+    name: '스티커', emoji: '🏷️',
+    views: ['앞면'],
+    getSVG: (w, h) => `
+      <svg width="${w}" height="${h}" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+        <!-- 그림자 -->
+        <ellipse cx="200" cy="388" rx="150" ry="8" fill="rgba(0,0,0,.25)"/>
+        <!-- 스티커 배경 (흰색) -->
+        <rect x="30" y="30" width="340" height="340" rx="20" fill="#f8f8f8"/>
+        <rect x="30" y="30" width="340" height="340" rx="20" fill="none" stroke="#ddd" stroke-width="1.5"/>
+        <!-- 절취선 -->
+        <rect x="40" y="40" width="320" height="320" rx="16" fill="none" stroke="#ccc" stroke-width="1" stroke-dasharray="5 3"/>
+        <!-- 디자인 영역 -->
+        <rect x="50" y="50" width="300" height="300" rx="12" fill="rgba(212,168,67,.04)" stroke="rgba(212,168,67,.3)" stroke-width="1" stroke-dasharray="6 4"/>
+      </svg>`,
+    designZone: { x: 50, y: 50, w: 300, h: 300 },
+    canvasW: 400, canvasH: 400,
+    price: '4,900'
+  }
+};
+
+// URL의 product를 PRODUCTS 키로 매핑
+const PRODUCT_MAP = { p1:'phone', p2:'mug', p3:'hoodie', p4:'photobook', p5:'sticker' };
+
+// ── 상태 ──
+let currentProduct = PRODUCTS[PRODUCT_MAP[productId] || 'phone'];
+let currentView = 0;
 let zoomLevel = 1;
 let currentTool = 'select';
 let elements = [];
 let selectedEl = null;
-let history = [];
-let historyIdx = -1;
 let isDragging = false;
-let dragStart = {x:0,y:0};
-let elStart = {x:0,y:0};
-
-const canvas = document.getElementById('designCanvas');
-const ctx = canvas.getContext('2d');
-
-// ── 템플릿 데이터 ──
-const TEMPLATES = [
-  {id:'t1',name:'미니멀 블랙',bg:'#1a1a1a',elements:[
-    {type:'text',text:'YOUR NAME',x:200,y:140,fontSize:28,fontWeight:'bold',fontFamily:'Playfair Display',color:'#d4a843',align:'center'},
-    {type:'text',text:'2025',x:200,y:180,fontSize:16,fontWeight:'400',fontFamily:'Noto Sans KR',color:'rgba(212,168,67,0.5)',align:'center'},
-    {type:'rect',x:60,y:200,w:280,h:1,color:'rgba(212,168,67,0.3)'},
-  ]},
-  {id:'t2',name:'그라데이션 핑크',bg:'linear-gradient(135deg,#ff9a9e,#fecfef)',elements:[
-    {type:'text',text:'LOVE',x:200,y:160,fontSize:42,fontWeight:'bold',fontFamily:'Playfair Display',color:'#fff',align:'center'},
-    {type:'text',text:'forever',x:200,y:205,fontSize:16,fontWeight:'300',fontFamily:'Noto Sans KR',color:'rgba(255,255,255,0.8)',align:'center'},
-  ]},
-  {id:'t3',name:'빈티지 필름',bg:'#f5e6c8',elements:[
-    {type:'rect',x:40,y:40,w:320,h:320,color:'transparent',stroke:'#8b5e3c',strokeW:3,radius:0},
-    {type:'rect',x:48,y:48,w:304,h:304,color:'transparent',stroke:'#8b5e3c',strokeW:1,radius:0},
-    {type:'text',text:'FILM STYLE',x:200,y:200,fontSize:24,fontWeight:'bold',fontFamily:'Playfair Display',color:'#8b5e3c',align:'center'},
-    {type:'text',text:'© 2025',x:200,y:235,fontSize:12,fontWeight:'400',fontFamily:'Noto Sans KR',color:'#8b5e3c',align:'center'},
-  ]},
-  {id:'t4',name:'스트리트',bg:'#0f0f0f',elements:[
-    {type:'rect',x:40,y:40,w:320,h:80,color:'#00ff88'},
-    {type:'text',text:'STREET',x:200,y:87,fontSize:36,fontWeight:'bold',fontFamily:'Noto Sans KR',color:'#000',align:'center'},
-    {type:'text',text:'MODE 2025',x:200,y:200,fontSize:20,fontWeight:'400',fontFamily:'Noto Sans KR',color:'#00ff88',align:'center'},
-  ]},
-  {id:'t5',name:'파스텔 블루',bg:'linear-gradient(135deg,#a8edea,#fed6e3)',elements:[
-    {type:'text',text:'SOFT',x:200,y:160,fontSize:52,fontWeight:'bold',fontFamily:'Playfair Display',color:'rgba(255,255,255,0.9)',align:'center'},
-    {type:'text',text:'& SWEET',x:200,y:220,fontSize:18,fontWeight:'300',fontFamily:'Noto Sans KR',color:'rgba(100,80,120,0.8)',align:'center'},
-  ]},
-  {id:'t6',name:'네온 사이버',bg:'#050510',elements:[
-    {type:'text',text:'CYBER',x:200,y:150,fontSize:40,fontWeight:'bold',fontFamily:'Noto Sans KR',color:'#ff00ff',align:'center'},
-    {type:'text',text:'2025',x:200,y:200,fontSize:24,fontWeight:'400',fontFamily:'Noto Sans KR',color:'#00ffff',align:'center'},
-    {type:'rect',x:60,y:215,w:280,h:1,color:'#ff00ff'},
-  ]},
-  {id:'t7',name:'포레스트',bg:'#1a2f1a',elements:[
-    {type:'text',text:'🌿',x:200,y:130,fontSize:48,fontFamily:'system-ui',color:'#7ec850',align:'center'},
-    {type:'text',text:'NATURE',x:200,y:190,fontSize:28,fontWeight:'bold',fontFamily:'Playfair Display',color:'#7ec850',align:'center'},
-  ]},
-  {id:'t8',name:'클래식 화이트',bg:'#ffffff',elements:[
-    {type:'rect',x:30,y:30,w:340,h:340,color:'transparent',stroke:'#333',strokeW:2,radius:0},
-    {type:'text',text:'CLASSIC',x:200,y:190,fontSize:32,fontWeight:'bold',fontFamily:'Playfair Display',color:'#333',align:'center'},
-    {type:'text',text:'MOMENTO',x:200,y:230,fontSize:12,fontWeight:'400',fontFamily:'Noto Sans KR',color:'#999',align:'center'},
-  ]},
-];
-
-// 현재 배경색
+let dragStart = {x:0, y:0};
+let elStart = {x:0, y:0};
+let history = [];
+let histIdx = -1;
 let bgColor = '#1a1a1a';
-let bgGradient = null;
+let designCanvas, designCtx;
+let stageScale = 1; // SVG 렌더 스케일
 
 // ── 초기화 ──
 function init() {
-  const pName = params.get('name') ? decodeURIComponent(params.get('name')) : (params.get('product') || '포토 폰케이스');
-  document.getElementById('tbProduct').textContent = pName + ' 편집기';
-  document.getElementById('orderOption').textContent = modelParam + ' / ' + materialParam;
-  renderTemplateThumbs();
-  loadTemplate(templateId);
-  setupCanvasEvents();
-  renderStickerGrid();
+  document.getElementById('tbProduct').textContent = (nameParam||currentProduct.name) + ' 편집기';
+  document.getElementById('omProduct').textContent = currentProduct.name;
+  document.getElementById('omOption').textContent = modelParam + ' / ' + materialParam;
+  document.getElementById('omPrice').textContent = '₩' + currentProduct.price + '~';
+
+  renderProductList();
+  renderStage();
+  setupStickers();
+  setupFontList();
   renderBgColors();
-  renderGradients();
+  renderTextColors();
+  loadTemplate(templateId);
+  saveHist();
 }
 
-// ── 템플릿 썸네일 ──
-function renderTemplateThumbs() {
-  const list = document.getElementById('tmplList');
-  list.innerHTML = TEMPLATES.map(t => `
-    <div class="tmpl-item${t.id===templateId?' active':''}" onclick="loadTemplateFromList('${t.id}',this)">
-      <canvas id="th-${t.id}" width="90" height="90"></canvas>
-      <div class="tmpl-item-name">${t.name}</div>
-    </div>
-  `).join('');
-  TEMPLATES.forEach(t => drawThumb(t));
+// ── 상품 목록 ──
+function renderProductList() {
+  const list = document.getElementById('productList');
+  list.innerHTML = Object.entries(PRODUCTS).map(([key, p]) => `
+    <div class="product-item${key===( PRODUCT_MAP[productId]||'phone')?' active':''}" onclick="selectProduct('${key}',this)">
+      <span class="product-item-icon">${p.emoji}</span>
+      <div>
+        <div class="product-item-name">${p.name}</div>
+        <div class="product-item-sub">₩${p.price}~</div>
+      </div>
+    </div>`).join('');
 }
 
-function drawThumb(t) {
-  const c = document.getElementById('th-'+t.id);
-  if (!c) return;
-  const x = c.getContext('2d');
-  c.width = 90; c.height = 90;
-  drawBg(x, t.bg, 90, 90);
-  t.elements.forEach(el => {
-    if (el.type === 'text') {
-      x.fillStyle = el.color || '#fff';
-      x.font = `${el.fontWeight||''} ${Math.round((el.fontSize||14)*0.22)}px ${el.fontFamily||'sans-serif'}`;
-      x.textAlign = el.align || 'left';
-      x.fillText(el.text, el.align==='center'?45:el.x*0.22, el.y*0.22);
-    }
-  });
-}
-
-function drawBg(ctx, bg, w, h) {
-  if (bg && bg.startsWith('linear-gradient')) {
-    const stops = bg.match(/#[a-f0-9]{6}|#[a-f0-9]{3}|rgba?\([^)]+\)/gi) || ['#333','#666'];
-    const grd = ctx.createLinearGradient(0,0,w,h);
-    grd.addColorStop(0, stops[0]);
-    grd.addColorStop(1, stops[1] || stops[0]);
-    ctx.fillStyle = grd;
-  } else {
-    ctx.fillStyle = bg || '#1a1a1a';
-  }
-  ctx.fillRect(0,0,w,h);
-}
-
-function loadTemplateFromList(id, el) {
-  document.querySelectorAll('.tmpl-item').forEach(t=>t.classList.remove('active'));
+function selectProduct(key, el) {
+  currentProduct = PRODUCTS[key];
+  document.querySelectorAll('.product-item').forEach(i=>i.classList.remove('active'));
   el.classList.add('active');
-  loadTemplate(id);
+  currentView = 0;
+  elements = [];
+  selectedEl = null;
+  bgColor = '#1a1a1a';
+  renderStage();
+  renderLayers();
+  renderPropPanel();
+  showToast(`${currentProduct.emoji} ${currentProduct.name}으로 변경됐어요`);
 }
 
-function loadTemplate(id) {
-  const tmpl = TEMPLATES.find(t=>t.id===id) || TEMPLATES[0];
-  bgGradient = tmpl.bg.startsWith('linear-gradient') ? tmpl.bg : null;
-  bgColor = tmpl.bg.startsWith('linear-gradient') ? '#1a1a1a' : tmpl.bg;
-  elements = tmpl.elements.map((el,i) => ({...el, id:'el-'+i, selected:false}));
-  selectedEl = null;
-  saveHistory();
+// ── 스테이지 렌더링 (상품 SVG + 디자인 캔버스) ──
+function renderStage() {
+  const stage = document.getElementById('productStage');
+  const area = document.getElementById('canvasArea');
+  const aW = area.clientWidth - 40;
+  const aH = area.clientHeight - 80;
+
+  const pW = currentProduct.canvasW;
+  const pH = currentProduct.canvasH;
+  stageScale = Math.min(aW/pW, aH/pH, 1.2) * zoomLevel;
+  const rW = Math.round(pW * stageScale);
+  const rH = Math.round(pH * stageScale);
+
+  // 디자인 영역 스케일
+  const dz = currentProduct.designZone;
+  const dzX = Math.round(dz.x * stageScale);
+  const dzY = Math.round(dz.y * stageScale);
+  const dzW = Math.round(dz.w * stageScale);
+  const dzH = Math.round(dz.h * stageScale);
+
+  stage.innerHTML = `
+    <div style="position:relative;width:${rW}px;height:${rH}px;">
+      <!-- 상품 SVG -->
+      <div style="position:absolute;inset:0;pointer-events:none;">
+        ${currentProduct.getSVG(rW, rH)}
+      </div>
+      <!-- 디자인 캔버스 (상품의 디자인 영역 위에) -->
+      <canvas id="designCanvas"
+        style="position:absolute;left:${dzX}px;top:${dzY}px;border-radius:4px;cursor:default;"
+        width="${dzW}" height="${dzH}"></canvas>
+      <!-- 선택 핸들 오버레이 -->
+      <canvas id="handleCanvas"
+        style="position:absolute;left:${dzX}px;top:${dzY}px;pointer-events:none;"
+        width="${dzW}" height="${dzH}"></canvas>
+    </div>`;
+
+  // 뷰 탭 업데이트
+  const vtabs = document.getElementById('viewTabs');
+  vtabs.innerHTML = currentProduct.views.map((v,i) =>
+    `<div class="view-tab${i===currentView?' active':''}" onclick="switchView(${i},this)">${v}</div>`).join('');
+
+  // 스테이지 레이블
+  document.getElementById('stageLabel').textContent = `${currentProduct.emoji} ${currentProduct.name} — ${currentProduct.views[currentView]}`;
+
+  // 캔버스 이벤트 설정
+  designCanvas = document.getElementById('designCanvas');
+  designCtx = designCanvas.getContext('2d');
+  designCanvas.addEventListener('mousedown', onMouseDown);
+  designCanvas.addEventListener('mousemove', onMouseMove);
+  designCanvas.addEventListener('mouseup', onMouseUp);
+  designCanvas.addEventListener('dblclick', onDblClick);
+  designCanvas.style.cursor = 'default';
+
   render();
-  renderLayers();
+  document.getElementById('zoomLbl').textContent = Math.round(zoomLevel*100)+'%';
+}
+
+function switchView(idx, el) {
+  currentView = idx;
+  document.querySelectorAll('.view-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('stageLabel').textContent = `${currentProduct.emoji} ${currentProduct.name} — ${currentProduct.views[currentView]}`;
 }
 
 // ── 렌더링 ──
 function render() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  drawBg(ctx, bgGradient || bgColor, canvas.width, canvas.height);
-  elements.forEach(el => drawElement(el));
-  if (selectedEl) drawSelection(selectedEl);
+  if (!designCtx) return;
+  const cw = designCanvas.width, ch = designCanvas.height;
+  designCtx.clearRect(0,0,cw,ch);
+
+  // 배경
+  designCtx.fillStyle = bgColor;
+  designCtx.fillRect(0,0,cw,ch);
+
+  // 요소들
+  elements.forEach(el => drawEl(el));
+
+  // 핸들 캔버스
+  const hc = document.getElementById('handleCanvas');
+  if (!hc) return;
+  const hctx = hc.getContext('2d');
+  hctx.clearRect(0,0,hc.width,hc.height);
+  if (selectedEl) drawHandles(hctx, selectedEl);
 }
 
-function drawElement(el) {
-  ctx.save();
+function drawEl(el) {
+  designCtx.save();
+  designCtx.globalAlpha = el.opacity || 1;
+
   if (el.type === 'text') {
-    ctx.fillStyle = el.color || '#fff';
-    ctx.font = `${el.fontWeight||''} ${el.fontSize||16}px "${el.fontFamily||'Noto Sans KR'}"`;
-    ctx.textAlign = el.align || 'left';
-    ctx.globalAlpha = el.opacity || 1;
-    // 줄바꿈 지원
-    (el.text||'').split('\n').forEach((line,i) => {
-      ctx.fillText(line, el.x, el.y + i * (el.fontSize||16) * 1.3);
-    });
-  } else if (el.type === 'rect') {
-    ctx.globalAlpha = el.opacity || 1;
+    designCtx.font = `${el.fontWeight||''} ${el.fontSize||20}px "${el.fontFamily||'Noto Sans KR'}"`;
+    designCtx.fillStyle = el.color || '#ffffff';
+    designCtx.textAlign = el.align || 'left';
+    const lines = (el.text||'').split('\n');
+    lines.forEach((line, i) => designCtx.fillText(line, el.x, el.y + i*(el.fontSize||20)*1.3));
+  }
+  else if (el.type === 'rect') {
     if (el.color && el.color !== 'transparent') {
-      ctx.fillStyle = el.color;
-      if (el.radius) {
-        roundRect(ctx, el.x, el.y, el.w, el.h, el.radius);
-        ctx.fill();
-      } else {
-        ctx.fillRect(el.x, el.y, el.w, el.h);
-      }
+      designCtx.fillStyle = el.color;
+      rrect(designCtx, el.x, el.y, el.w||80, el.h||40, el.radius||0);
+      designCtx.fill();
     }
     if (el.stroke) {
-      ctx.strokeStyle = el.stroke;
-      ctx.lineWidth = el.strokeW || 1;
-      if (el.radius) { roundRect(ctx, el.x, el.y, el.w, el.h, el.radius); ctx.stroke(); }
-      else ctx.strokeRect(el.x, el.y, el.w, el.h);
+      designCtx.strokeStyle = el.stroke;
+      designCtx.lineWidth = el.strokeW||1;
+      rrect(designCtx, el.x, el.y, el.w||80, el.h||40, el.radius||0);
+      designCtx.stroke();
     }
-  } else if (el.type === 'image' && el.img) {
-    ctx.globalAlpha = el.opacity || 1;
-    ctx.drawImage(el.img, el.x, el.y, el.w || 100, el.h || 100);
   }
+  else if (el.type === 'circle') {
+    designCtx.beginPath();
+    designCtx.arc(el.x + (el.r||40), el.y + (el.r||40), el.r||40, 0, Math.PI*2);
+    if (el.color) { designCtx.fillStyle = el.color; designCtx.fill(); }
+    if (el.stroke) { designCtx.strokeStyle = el.stroke; designCtx.lineWidth = el.strokeW||1; designCtx.stroke(); }
+  }
+  else if (el.type === 'line') {
+    designCtx.beginPath();
+    designCtx.moveTo(el.x, el.y);
+    designCtx.lineTo(el.x + (el.w||80), el.y);
+    designCtx.strokeStyle = el.stroke || '#ffffff';
+    designCtx.lineWidth = el.strokeW || 2;
+    designCtx.stroke();
+  }
+  else if (el.type === 'image' && el.img) {
+    designCtx.drawImage(el.img, el.x, el.y, el.w||100, el.h||100);
+  }
+
+  designCtx.restore();
+}
+
+function drawHandles(ctx, el) {
+  const b = getBounds(el);
+  ctx.save();
+  ctx.strokeStyle = '#d4a843';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4,3]);
+  ctx.strokeRect(b.x-4, b.y-4, b.w+8, b.h+8);
+  ctx.setLineDash([]);
+  const pts = [[b.x-4,b.y-4],[b.x+b.w/2,b.y-4],[b.x+b.w+4,b.y-4],[b.x+b.w+4,b.y+b.h/2],[b.x+b.w+4,b.y+b.h+4],[b.x+b.w/2,b.y+b.h+4],[b.x-4,b.y+b.h+4],[b.x-4,b.y+b.h/2]];
+  pts.forEach(([hx,hy]) => {
+    ctx.fillStyle='#d4a843'; ctx.fillRect(hx-4,hy-4,8,8);
+    ctx.strokeStyle='#000'; ctx.lineWidth=1; ctx.setLineDash([]); ctx.strokeRect(hx-4,hy-4,8,8);
+  });
   ctx.restore();
 }
 
-function roundRect(ctx, x, y, w, h, r) {
+function rrect(ctx, x, y, w, h, r) {
   ctx.beginPath();
-  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y);
-  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
   ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
   ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
   ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
   ctx.closePath();
 }
 
-function drawSelection(el) {
-  const {x,y,w,h} = getElBounds(el);
-  ctx.save();
-  ctx.strokeStyle = '#d4a843';
-  ctx.lineWidth = 1.5;
-  ctx.setLineDash([4,3]);
-  ctx.strokeRect(x-4, y-4, w+8, h+8);
-  ctx.setLineDash([]);
-  [[x-4,y-4],[x+w/2,y-4],[x+w+4,y-4],[x+w+4,y+h/2],[x+w+4,y+h+4],[x+w/2,y+h+4],[x-4,y+h+4],[x-4,y+h/2]].forEach(([hx,hy])=>{
-    ctx.fillStyle='#d4a843'; ctx.fillRect(hx-4,hy-4,8,8);
-  });
-  ctx.restore();
-}
-
-function getElBounds(el) {
+function getBounds(el) {
   if (el.type === 'text') {
-    ctx.font = `${el.fontWeight||''} ${el.fontSize||16}px "${el.fontFamily||'Noto Sans KR'}"`;
+    designCtx.font = `${el.fontWeight||''} ${el.fontSize||20}px "${el.fontFamily||'Noto Sans KR'}"`;
     const lines = (el.text||'').split('\n');
-    const w = Math.max(...lines.map(l=>ctx.measureText(l).width));
-    const h = lines.length * (el.fontSize||16) * 1.3;
+    const w = Math.max(...lines.map(l=>designCtx.measureText(l).width));
+    const h = lines.length * (el.fontSize||20) * 1.3;
     const ox = el.align==='center' ? el.x-w/2 : el.align==='right' ? el.x-w : el.x;
-    return {x:ox, y:el.y-(el.fontSize||16), w, h};
+    return {x:ox, y:el.y-(el.fontSize||20), w, h};
   }
-  return {x:el.x||0, y:el.y||0, w:el.w||100, h:el.h||40};
+  if (el.type==='circle') return {x:el.x, y:el.y, w:(el.r||40)*2, h:(el.r||40)*2};
+  if (el.type==='line') return {x:el.x, y:el.y-4, w:el.w||80, h:8};
+  return {x:el.x||0, y:el.y||0, w:el.w||80, h:el.h||40};
 }
 
-// ── 캔버스 이벤트 ──
-function setupCanvasEvents() {
-  canvas.addEventListener('mousedown', onMouseDown);
-  canvas.addEventListener('mousemove', onMouseMove);
-  canvas.addEventListener('mouseup', onMouseUp);
-  canvas.addEventListener('dblclick', onDblClick);
-}
-
-function getCanvasPos(e) {
-  const rect = canvas.getBoundingClientRect();
-  const scaleX = canvas.width / rect.width;
-  const scaleY = canvas.height / rect.height;
-  return {x:(e.clientX-rect.left)*scaleX, y:(e.clientY-rect.top)*scaleY};
-}
-
+// ── 이벤트 ──
 function onMouseDown(e) {
-  const {x,y} = getCanvasPos(e);
-  if (currentTool === 'text') { addText('텍스트 입력','bold 24px','Noto Sans KR',x,y); setTool('select'); return; }
-  if (currentTool === 'shape') { addRect(x,y); setTool('select'); return; }
-  // 요소 선택
+  const {x,y} = canvasPos(e);
+  if (currentTool === 'text') { addText('텍스트 입력','bold 24px','Noto Sans KR',null,x,y); setTool('select'); return; }
+  if (currentTool === 'shape') { addShape('rect',x,y); setTool('select'); return; }
+
   let hit = null;
   for (let i=elements.length-1;i>=0;i--) {
-    const b = getElBounds(elements[i]);
-    if (x>=b.x&&x<=b.x+b.w&&y>=b.y&&y<=b.y+b.h) { hit=elements[i]; break; }
+    const b=getBounds(elements[i]);
+    if (x>=b.x&&x<=b.x+b.w&&y>=b.y&&y<=b.y+b.h){hit=elements[i];break;}
   }
-  selectedEl = hit;
+  selectedEl=hit;
   if (hit) {
-    isDragging = true;
-    dragStart = {x,y};
-    elStart = {x:hit.x, y:hit.y};
+    isDragging=true;
+    dragStart={x,y};
+    elStart={x:hit.x,y:hit.y};
   }
-  render();
-  renderLayers();
-  renderPropPanel();
+  render(); renderLayers(); renderPropPanel();
 }
 
 function onMouseMove(e) {
-  if (!isDragging || !selectedEl) return;
-  const {x,y} = getCanvasPos(e);
+  if (!isDragging||!selectedEl) return;
+  const {x,y}=canvasPos(e);
   selectedEl.x = elStart.x + (x-dragStart.x);
   selectedEl.y = elStart.y + (y-dragStart.y);
   render();
 }
 
 function onMouseUp() {
-  if (isDragging) saveHistory();
-  isDragging = false;
+  if (isDragging) saveHist();
+  isDragging=false;
 }
 
 function onDblClick(e) {
-  const {x,y} = getCanvasPos(e);
+  const {x,y}=canvasPos(e);
   for (let i=elements.length-1;i>=0;i--) {
-    const el = elements[i];
-    if (el.type !== 'text') continue;
-    const b = getElBounds(el);
-    if (x>=b.x&&x<=b.x+b.w&&y>=b.y&&y<=b.y+b.h) {
-      const newText = prompt('텍스트 편집:', el.text);
-      if (newText !== null) { el.text = newText; saveHistory(); render(); renderLayers(); }
+    const el=elements[i]; if(el.type!=='text')continue;
+    const b=getBounds(el);
+    if(x>=b.x&&x<=b.x+b.w&&y>=b.y&&y<=b.y+b.h){
+      const t=prompt('텍스트 편집:',el.text);
+      if(t!==null){el.text=t;saveHist();render();renderLayers();}
       return;
     }
   }
 }
 
-// ── 요소 추가 ──
-function addText(text, font, family, x, y) {
-  const parts = font.match(/(bold|500|300)?[\s]*([\d]+)px/);
-  const fw = parts?.[1] || 'normal';
-  const fs = parseInt(parts?.[2]) || 24;
-  const newEl = {id:'el-'+Date.now(), type:'text', text, fontFamily:family, fontSize:fs, fontWeight:fw, color:'#ffffff', align:'center', x:x||200, y:y||200, opacity:1};
-  elements.push(newEl);
-  selectedEl = newEl;
-  saveHistory(); render(); renderLayers(); renderPropPanel();
+function canvasPos(e) {
+  const r=designCanvas.getBoundingClientRect();
+  return {x:(e.clientX-r.left)*designCanvas.width/r.width, y:(e.clientY-r.top)*designCanvas.height/r.height};
 }
 
-function addRect(x, y) {
-  const newEl = {id:'el-'+Date.now(), type:'rect', x:x-50, y:y-25, w:100, h:50, color:'rgba(212,168,67,0.3)', stroke:'#d4a843', strokeW:1, radius:8, opacity:1};
-  elements.push(newEl);
-  selectedEl = newEl;
-  saveHistory(); render(); renderLayers(); renderPropPanel();
+// ── 요소 추가 ──
+function addText(text, font, family, template, x, y) {
+  const m = font.match(/(bold|500|300)?[\s]*([\d]+)px/)||[];
+  const fw = m[1]||'normal', fs = parseInt(m[2])||20;
+  const cw = designCanvas?.width||300, ch = designCanvas?.height||300;
+  const el = {id:'e'+Date.now(), type:'text', text:text||'텍스트', fontFamily:family||'Noto Sans KR', fontSize:fs, fontWeight:fw, color:template?.color||'#ffffff', align:'center', x:x||(cw/2), y:y||(ch/2), opacity:1};
+  if (template) Object.assign(el, template);
+  elements.push(el);
+  selectedEl=el;
+  saveHist(); render(); renderLayers(); renderPropPanel();
+}
+
+function addShape(type, x, y) {
+  const cw=designCanvas?.width||300, ch=designCanvas?.height||300;
+  let el;
+  if (type==='rect') el={id:'e'+Date.now(),type:'rect',x:x||(cw/2-50),y:y||(ch/2-25),w:100,h:50,color:'rgba(212,168,67,0.3)',stroke:'#d4a843',strokeW:1.5,radius:6,opacity:1};
+  else if (type==='circle') el={id:'e'+Date.now(),type:'circle',x:x||(cw/2-40),y:y||(ch/2-40),r:40,color:'rgba(212,168,67,0.2)',stroke:'#d4a843',strokeW:1.5,opacity:1};
+  else if (type==='line') el={id:'e'+Date.now(),type:'line',x:x||(cw/2-60),y:y||(ch/2),w:120,stroke:'#d4a843',strokeW:2,opacity:1};
+  elements.push(el);
+  selectedEl=el;
+  saveHist(); render(); renderLayers(); renderPropPanel();
 }
 
 function addImageFromFile(input) {
@@ -586,239 +853,259 @@ function addImageFromFile(input) {
   reader.onload = e => {
     const img = new Image();
     img.onload = () => {
-      const maxW = 200, scale = Math.min(maxW/img.width, maxW/img.height, 1);
-      const newEl = {id:'el-'+Date.now(), type:'image', img, x:100, y:100, w:img.width*scale, h:img.height*scale, opacity:1};
-      elements.push(newEl);
-      selectedEl = newEl;
-      saveHistory(); render(); renderLayers(); renderPropPanel();
+      const cw=designCanvas.width, ch=designCanvas.height;
+      const maxW=cw*0.6, scale=Math.min(maxW/img.width, maxW/img.height, 1);
+      const el={id:'e'+Date.now(),type:'image',img,x:cw/2-img.width*scale/2,y:ch/2-img.height*scale/2,w:img.width*scale,h:img.height*scale,opacity:1};
+      // 최근 이미지에 썸네일 추가
+      const ri = document.getElementById('recentImgs');
+      if (ri) {
+        const d = document.createElement('div');
+        d.style.cssText='aspect-ratio:1;border-radius:6px;overflow:hidden;cursor:pointer;border:1px solid var(--bd)';
+        d.innerHTML=`<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover" onclick="addImageFromSrc('${e.target.result}')">`;
+        ri.prepend(d);
+      }
+      elements.push(el);
+      selectedEl=el;
+      saveHist(); render(); renderLayers(); renderPropPanel();
     };
     img.src = e.target.result;
   };
   reader.readAsDataURL(input.files[0]);
 }
 
+function addImageFromSrc(src) {
+  const img = new Image();
+  img.onload = () => {
+    const cw=designCanvas.width, ch=designCanvas.height;
+    const maxW=cw*0.6, scale=Math.min(maxW/img.width, maxW/img.height, 1);
+    const el={id:'e'+Date.now(),type:'image',img,x:cw/2-img.width*scale/2,y:ch/2-img.height*scale/2,w:img.width*scale,h:img.height*scale,opacity:1};
+    elements.push(el);
+    selectedEl=el;
+    saveHist(); render(); renderLayers(); renderPropPanel();
+  };
+  img.src=src;
+}
+
 // ── 속성 패널 ──
 function renderPropPanel() {
-  const panel = document.getElementById('propPanel');
-  if (!selectedEl) { panel.innerHTML='<div style="font-size:12px;color:var(--text3);text-align:center;padding:16px 0;">요소를 선택하세요</div>'; return; }
+  const p = document.getElementById('propPanel');
+  if (!selectedEl) { p.innerHTML='<div style="font-size:12px;color:var(--tx3);text-align:center;padding:16px 0">요소를 선택하세요</div>'; return; }
   const el = selectedEl;
-  if (el.type === 'text') {
-    panel.innerHTML = `
-      <div class="prop-row"><span class="prop-label">내용</span></div>
-      <input class="prop-input" style="width:100%;margin-bottom:8px;" value="${el.text}" oninput="selProp('text',this.value)">
-      <div class="prop-row"><span class="prop-label">크기</span><input class="prop-input sm" type="number" value="${el.fontSize}" oninput="selProp('fontSize',+this.value)"></div>
-      <div class="prop-row"><span class="prop-label">색상</span><input class="prop-color-input" type="color" value="${toHex(el.color)}" oninput="selProp('color',this.value)"></div>
-      <div class="prop-row"><span class="prop-label">정렬</span>
-        <div class="align-btns">
-          <button class="align-btn${el.align==='left'?' active':''}" onclick="selProp('align','left')">좌</button>
-          <button class="align-btn${el.align==='center'?' active':''}" onclick="selProp('align','center')">중</button>
-          <button class="align-btn${el.align==='right'?' active':''}" onclick="selProp('align','right')">우</button>
+
+  if (el.type==='text') {
+    p.innerHTML=`
+      <div class="prop-row"><span class="prop-lbl">내용</span></div>
+      <input class="prop-input" style="width:100%;margin-bottom:8px" value="${el.text||''}" oninput="selProp('text',this.value)">
+      <div class="prop-row"><span class="prop-lbl">크기</span><input class="prop-input sm" type="number" value="${el.fontSize}" min="8" max="200" oninput="selProp('fontSize',+this.value)"></div>
+      <div class="prop-row"><span class="prop-lbl">색상</span><input class="prop-color" type="color" value="${toHex(el.color)}" oninput="selProp('color',this.value)"></div>
+      <div class="prop-row"><span class="prop-lbl">굵기</span>
+        <div style="display:flex;gap:4px">
+          <button class="align-btn" style="${el.fontWeight==='bold'?'border-color:var(--gold);color:var(--gold)':''}" onclick="selProp('fontWeight','bold')"><b>B</b></button>
+          <button class="align-btn" onclick="selProp('fontWeight','normal')">N</button>
         </div>
       </div>
-      <div class="prop-row"><span class="prop-label">굵기</span>
-        <div class="align-btns">
-          <button class="align-btn${el.fontWeight==='bold'?' active':''}" onclick="selProp('fontWeight','bold')"><b>B</b></button>
-          <button class="align-btn${el.fontWeight==='normal'||!el.fontWeight?' active':''}" onclick="selProp('fontWeight','normal')">N</button>
+      <div class="prop-row"><span class="prop-lbl">정렬</span>
+        <div style="display:flex;gap:4px">
+          <button class="align-btn" onclick="selProp('align','left')">좌</button>
+          <button class="align-btn" onclick="selProp('align','center')">중</button>
+          <button class="align-btn" onclick="selProp('align','right')">우</button>
         </div>
       </div>
-      <div class="slider-row"><span class="prop-label">투명도</span><input type="range" class="prop-slider" min="0" max="1" step="0.05" value="${el.opacity||1}" oninput="selProp('opacity',+this.value);document.getElementById('opVal').textContent=Math.round(this.value*100)+'%'"><span class="slider-val" id="opVal">${Math.round((el.opacity||1)*100)}%</span></div>
-      <button style="width:100%;margin-top:8px;padding:6px;background:#f87171;border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;" onclick="deleteSelected()">삭제</button>
-    `;
-  } else if (el.type === 'rect') {
-    panel.innerHTML = `
-      <div class="prop-row"><span class="prop-label">채우기</span><input class="prop-color-input" type="color" value="${toHex(el.color||'#000')}" oninput="selProp('color',this.value)"></div>
-      <div class="prop-row"><span class="prop-label">테두리</span><input class="prop-color-input" type="color" value="${toHex(el.stroke||'#fff')}" oninput="selProp('stroke',this.value)"></div>
-      <div class="prop-row"><span class="prop-label">테두리두께</span><input class="prop-input sm" type="number" value="${el.strokeW||1}" oninput="selProp('strokeW',+this.value)"></div>
-      <div class="prop-row"><span class="prop-label">모서리</span><input class="prop-input sm" type="number" value="${el.radius||0}" oninput="selProp('radius',+this.value)"></div>
-      <div class="prop-row"><span class="prop-label">가로</span><input class="prop-input sm" type="number" value="${Math.round(el.w)}" oninput="selProp('w',+this.value)"></div>
-      <div class="prop-row"><span class="prop-label">세로</span><input class="prop-input sm" type="number" value="${Math.round(el.h)}" oninput="selProp('h',+this.value)"></div>
-      <div class="slider-row"><span class="prop-label">투명도</span><input type="range" class="prop-slider" min="0" max="1" step="0.05" value="${el.opacity||1}" oninput="selProp('opacity',+this.value)"><span class="slider-val">${Math.round((el.opacity||1)*100)}%</span></div>
-      <button style="width:100%;margin-top:8px;padding:6px;background:#f87171;border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;" onclick="deleteSelected()">삭제</button>
-    `;
+      <div class="range-row"><span class="prop-lbl">투명도</span><input type="range" class="prop-range" min="0" max="1" step=".05" value="${el.opacity||1}" oninput="selProp('opacity',+this.value);this.nextElementSibling.textContent=Math.round(this.value*100)+'%'"><span class="range-val">${Math.round((el.opacity||1)*100)}%</span></div>
+      <button style="width:100%;margin-top:6px;padding:6px;background:#f87171;border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px" onclick="deleteSelected()">삭제</button>`;
+  } else if (el.type==='rect') {
+    p.innerHTML=`
+      <div class="prop-row"><span class="prop-lbl">채우기</span><input class="prop-color" type="color" value="${toHex(el.color||'#000')}" oninput="selProp('color',this.value)"></div>
+      <div class="prop-row"><span class="prop-lbl">테두리</span><input class="prop-color" type="color" value="${toHex(el.stroke||'#fff')}" oninput="selProp('stroke',this.value)"></div>
+      <div class="prop-row"><span class="prop-lbl">테두리 두께</span><input class="prop-input sm" type="number" value="${el.strokeW||1}" min="0" oninput="selProp('strokeW',+this.value)"></div>
+      <div class="prop-row"><span class="prop-lbl">모서리</span><input class="prop-input sm" type="number" value="${el.radius||0}" min="0" oninput="selProp('radius',+this.value)"></div>
+      <div class="prop-row"><span class="prop-lbl">가로</span><input class="prop-input sm" type="number" value="${Math.round(el.w)}" oninput="selProp('w',+this.value)"></div>
+      <div class="prop-row"><span class="prop-lbl">세로</span><input class="prop-input sm" type="number" value="${Math.round(el.h)}" oninput="selProp('h',+this.value)"></div>
+      <div class="range-row"><span class="prop-lbl">투명도</span><input type="range" class="prop-range" min="0" max="1" step=".05" value="${el.opacity||1}" oninput="selProp('opacity',+this.value)"><span class="range-val">${Math.round((el.opacity||1)*100)}%</span></div>
+      <button style="width:100%;margin-top:6px;padding:6px;background:#f87171;border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px" onclick="deleteSelected()">삭제</button>`;
   } else {
-    panel.innerHTML = `
-      <div class="slider-row"><span class="prop-label">투명도</span><input type="range" class="prop-slider" min="0" max="1" step="0.05" value="${el.opacity||1}" oninput="selProp('opacity',+this.value)"><span class="slider-val">${Math.round((el.opacity||1)*100)}%</span></div>
-      <button style="width:100%;margin-top:8px;padding:6px;background:#f87171;border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;" onclick="deleteSelected()">삭제</button>
-    `;
+    p.innerHTML=`
+      <div class="range-row"><span class="prop-lbl">투명도</span><input type="range" class="prop-range" min="0" max="1" step=".05" value="${el.opacity||1}" oninput="selProp('opacity',+this.value)"><span class="range-val">${Math.round((el.opacity||1)*100)}%</span></div>
+      <div class="prop-row"><span class="prop-lbl">가로</span><input class="prop-input sm" type="number" value="${Math.round(el.w||100)}" oninput="selProp('w',+this.value)"></div>
+      <div class="prop-row"><span class="prop-lbl">세로</span><input class="prop-input sm" type="number" value="${Math.round(el.h||100)}" oninput="selProp('h',+this.value)"></div>
+      <button style="width:100%;margin-top:6px;padding:6px;background:#f87171;border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px" onclick="deleteSelected()">삭제</button>`;
   }
 }
 
-function selProp(key, val) {
-  if (!selectedEl) return;
-  selectedEl[key] = val;
-  render();
-  if (key==='text'||key==='fontWeight'||key==='align') renderPropPanel();
-}
+function selProp(key,val){ if(!selectedEl)return; selectedEl[key]=val; render(); if(key==='fontWeight'||key==='align')renderPropPanel(); }
+function toHex(c){if(!c||c.startsWith('#'))return c||'#000000';return '#888888';}
+function deleteSelected(){ if(!selectedEl)return; elements=elements.filter(e=>e.id!==selectedEl.id); selectedEl=null; saveHist(); render(); renderLayers(); renderPropPanel(); }
 
-function toHex(color) {
-  if (!color || color.startsWith('#')) return color || '#000000';
-  if (color.startsWith('rgba')) return '#888888';
-  return '#000000';
-}
-
-function deleteSelected() {
-  if (!selectedEl) return;
-  elements = elements.filter(e=>e.id!==selectedEl.id);
-  selectedEl = null;
-  saveHistory(); render(); renderLayers(); renderPropPanel();
+// ── 정렬 ──
+function alignEl(dir) {
+  if (!selectedEl||!designCanvas) return;
+  const b=getBounds(selectedEl), cw=designCanvas.width, ch=designCanvas.height;
+  if (dir==='left') selectedEl.x = selectedEl.type==='text'?0:0;
+  else if (dir==='center-h') selectedEl.x = cw/2 - (selectedEl.type==='text'?0:b.w/2);
+  else if (dir==='right') selectedEl.x = cw - (selectedEl.type!=='text'?b.w:0);
+  else if (dir==='top') selectedEl.y = selectedEl.type==='text'?(selectedEl.fontSize||20):0;
+  else if (dir==='center-v') selectedEl.y = ch/2 + (selectedEl.type==='text'?(selectedEl.fontSize||20)/2:b.h/2);
+  else if (dir==='bottom') selectedEl.y = ch - (selectedEl.type!=='text'?b.h:0);
+  saveHist(); render();
 }
 
 // ── 레이어 ──
 function renderLayers() {
   const list = document.getElementById('layerList');
-  list.innerHTML = [...elements].reverse().map((el,i) => {
-    const icon = el.type==='text'?'T':el.type==='image'?'🖼':el.type==='rect'?'▢':'?';
-    const name = el.type==='text'?el.text.substring(0,12):el.type==='image'?'이미지':'도형';
-    return `<div class="layer-item${el.id===selectedEl?.id?' active':''}" onclick="selectById('${el.id}')">
-      <span class="layer-icon">${icon}</span>
-      <span class="layer-name">${name}</span>
-    </div>`;
+  list.innerHTML = [...elements].reverse().map(el => {
+    const ic = el.type==='text'?'T':el.type==='image'?'🖼':el.type==='rect'?'▭':el.type==='circle'?'●':'—';
+    const nm = el.type==='text'?el.text.substring(0,12):el.type==='image'?'이미지':el.type==='rect'?'직사각형':el.type==='circle'?'원형':'선';
+    return `<div class="layer-item${el.id===selectedEl?.id?' active':''}" onclick="selectById('${el.id}')"><span class="layer-ic">${ic}</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nm}</span></div>`;
   }).join('');
 }
 
-function selectById(id) {
-  selectedEl = elements.find(e=>e.id===id) || null;
-  render(); renderLayers(); renderPropPanel();
+function selectById(id){ selectedEl=elements.find(e=>e.id===id)||null; render(); renderLayers(); renderPropPanel(); }
+
+// ── 폰트 & 색상 ──
+function setupFontList() {
+  const fonts = [
+    {name:'Noto Sans KR',label:'Noto Sans KR'},
+    {name:'Playfair Display',label:'Playfair Display'},
+    {name:'serif',label:'Serif 기본체'},
+    {name:'monospace',label:'Monospace'},
+  ];
+  document.getElementById('fontList').innerHTML = fonts.map(f=>
+    `<div class="font-item" style="font-family:'${f.name}'" onclick="applyFont('${f.name}',this)">${f.label}</div>`).join('');
 }
 
-// ── 정렬 ──
-function alignEl(dir) {
-  if (!selectedEl) return;
-  const b = getElBounds(selectedEl);
-  const cw = canvas.width, ch = canvas.height;
-  if (dir==='left') selectedEl.x = (selectedEl.type==='text'?0:0);
-  else if (dir==='center-h') selectedEl.x = cw/2 - (selectedEl.type==='text'?0:b.w/2);
-  else if (dir==='right') selectedEl.x = cw - (selectedEl.type!=='text'?b.w:0);
-  else if (dir==='top') selectedEl.y = selectedEl.type==='text'?(selectedEl.fontSize||16):0;
-  else if (dir==='center-v') selectedEl.y = ch/2 + (selectedEl.type==='text'?(selectedEl.fontSize||16)/2:b.h/2);
-  else if (dir==='bottom') selectedEl.y = ch - (selectedEl.type!=='text'?0:0);
-  saveHistory(); render();
-}
-
-// ── 폰트 ──
 function applyFont(family, el) {
   document.querySelectorAll('.font-item').forEach(f=>f.classList.remove('active'));
   el.classList.add('active');
-  if (selectedEl && selectedEl.type==='text') { selectedEl.fontFamily=family; render(); }
+  if (selectedEl?.type==='text') { selectedEl.fontFamily=family; render(); }
 }
 
-// ── 배경 ──
 function renderBgColors() {
-  const colors = ['#0a0a0a','#1a1a1a','#2d2d2d','#fff','#f5e6c8','#1a2f1a','#0f0f0f','#050510','#1a1040','#2f1a1a','#1a2f2f','#2f2f1a'];
+  const colors=['#0a0a0a','#1a1a1a','#ffffff','#f5e6c8','#1a2f1a','#0f0f0f','#1a1040','#2f1a1a','#1a2f2f','#050510','#f5f5f5','#3d2b1a'];
   document.getElementById('bgColorGrid').innerHTML = colors.map(c=>
-    `<div class="bg-color" style="background:${c};border:1px solid var(--border2)" onclick="setBgColor('${c}')"></div>`
-  ).join('');
+    `<div class="color-dot" style="background:${c};border:1px solid rgba(255,255,255,.1)" onclick="setBgColor('${c}')"></div>`).join('');
 }
 
-function renderGradients() {
-  const grads = [
-    'linear-gradient(135deg,#ff9a9e,#fecfef)',
-    'linear-gradient(135deg,#a8edea,#fed6e3)',
-    'linear-gradient(135deg,#0f2027,#203a43,#2c5364)',
-    'linear-gradient(135deg,#f093fb,#f5576c)',
-    'linear-gradient(135deg,#4facfe,#00f2fe)',
-    'linear-gradient(135deg,#43e97b,#38f9d7)',
-  ];
-  document.getElementById('gradientList').innerHTML = grads.map(g=>
-    `<div class="grad-item" style="background:${g}" onclick="setBgGradient('${g}')"></div>`
-  ).join('');
+function renderTextColors() {
+  const colors=['#ffffff','#f0ede8','#d4a843','#4ade80','#60a5fa','#f87171','#c084fc','#fb923c','#000000','#1a1a1a','#555','#888'];
+  document.getElementById('textColorGrid').innerHTML = colors.map(c=>
+    `<div class="color-dot" style="background:${c};border:1px solid rgba(255,255,255,.15)" onclick="applyTextColor('${c}')"></div>`).join('');
 }
 
-function setBgColor(color) { bgColor=color; bgGradient=null; render(); }
-function setBgGradient(grad) { bgGradient=grad; render(); }
+function setBgColor(c) { bgColor=c; render(); }
+function applyTextColor(c) { if(selectedEl?.type==='text'){selectedEl.color=c;render();renderPropPanel();} }
 
 // ── 스티커 ──
-function renderStickerGrid() {
-  const stickers = ['⭐','💖','🌸','🎀','🔥','💎','🌙','✨','🦋','🌈','🎵','🌺','🏆','💫','🌊','🎭'];
-  document.getElementById('stickerGrid').innerHTML = stickers.map(s=>
-    `<div class="sticker-item" onclick="addText('${s}','bold 36px','system-ui')">${s}</div>`
-  ).join('');
+function setupStickers() {
+  const s1=['⭐','💖','✨','🔥','💎','🌙','🎀','💫'];
+  const s2=['🌸','🌺','🌈','🦋','🐾','🌿','🌊','🍀'];
+  const s3=['♥','♠','★','❋','◈','▲','●','◆'];
+  ['stickerGrid1','stickerGrid2','stickerGrid3'].forEach((id,i)=>{
+    document.getElementById(id).innerHTML=[s1,s2,s3][i].map(s=>
+      `<div class="sticker-item" onclick="addSticker('${s}')">${s}</div>`).join('');
+  });
 }
 
-// ── 툴 ──
-function setTool(tool) {
-  currentTool = tool;
-  canvas.style.cursor = tool==='text'?'text':tool==='shape'?'crosshair':'default';
-  document.querySelectorAll('.tb-tool-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tool'+tool.charAt(0).toUpperCase()+tool.slice(1))?.classList.add('active');
+function addSticker(s) {
+  addText(s, 'bold 36px', 'system-ui');
+}
+
+// ── 템플릿 로드 ──
+const TEMPLATES = {
+  t1:{color:'#d4a843',texts:[{text:'YOUR NAME',fontSize:28,fontWeight:'bold',fontFamily:'Playfair Display',color:'#d4a843',align:'center'},{text:'2025',fontSize:14,fontWeight:'normal',fontFamily:'Noto Sans KR',color:'rgba(212,168,67,0.5)',align:'center'}]},
+  t2:{color:'#ffffff',texts:[{text:'LOVE',fontSize:42,fontWeight:'bold',fontFamily:'Playfair Display',color:'#ffffff',align:'center'},{text:'forever',fontSize:16,fontWeight:'300',fontFamily:'Noto Sans KR',color:'rgba(255,255,255,0.7)',align:'center'}]},
+  t3:{color:'#8b5e3c',texts:[{text:'FILM STYLE',fontSize:24,fontWeight:'bold',fontFamily:'Playfair Display',color:'#8b5e3c',align:'center'},{text:'© 2025',fontSize:12,fontWeight:'normal',fontFamily:'Noto Sans KR',color:'#8b5e3c',align:'center'}]},
+};
+
+function loadTemplate(id) {
+  const tmpl = TEMPLATES[id];
+  if (!tmpl) return;
+  elements = [];
+  setTimeout(() => {
+    if (!designCanvas) return;
+    const cw = designCanvas.width, ch = designCanvas.height;
+    tmpl.texts.forEach((t, i) => {
+      elements.push({id:'e'+Date.now()+i, type:'text', x:cw/2, y:ch*0.35+i*50, opacity:1, ...t});
+    });
+    saveHist(); render(); renderLayers();
+  }, 200);
+}
+
+// ── 도구 ──
+function setTool(t) {
+  currentTool=t;
+  if (!designCanvas) return;
+  designCanvas.style.cursor = t==='text'?'text':t==='shape'?'crosshair':'default';
+  ['select','text','shape'].forEach(k=>{
+    const btn=document.getElementById('tool'+k.charAt(0).toUpperCase()+k.slice(1));
+    if(btn)btn.classList.toggle('active',k===t);
+  });
 }
 
 // ── 줌 ──
-function zoom(delta) {
-  zoomLevel = Math.max(0.3, Math.min(3, zoomLevel + delta));
-  applyZoom();
-}
-function resetZoom() { zoomLevel=1; applyZoom(); }
-function applyZoom() {
-  const frame = document.getElementById('canvasFrame');
-  frame.style.transform = `scale(${zoomLevel})`;
-  frame.style.transformOrigin = 'center center';
-  document.getElementById('zoomLabel').textContent = Math.round(zoomLevel*100)+'%';
-}
+function zoom(d) { zoomLevel=Math.max(.3,Math.min(3,zoomLevel+d)); renderStage(); }
+function fitZoom() { zoomLevel=1; renderStage(); }
 
 // ── 히스토리 ──
-function saveHistory() {
-  history = history.slice(0, historyIdx+1);
-  history.push({elements:JSON.parse(JSON.stringify(elements.filter(e=>e.type!=='image'))), bg:bgColor, bgG:bgGradient});
-  historyIdx++;
+function saveHist() {
+  history=history.slice(0,histIdx+1);
+  history.push({els:elements.filter(e=>e.type!=='image').map(e=>({...e})),bg:bgColor});
+  histIdx++;
 }
-function undo() { if(historyIdx>0){historyIdx--;restoreHistory();} }
-function redo() { if(historyIdx<history.length-1){historyIdx++;restoreHistory();} }
-function restoreHistory() {
-  const h = history[historyIdx];
-  elements = h.elements.map(e=>({...e}));
-  bgColor = h.bg; bgGradient = h.bgG;
-  selectedEl = null; render(); renderLayers(); renderPropPanel();
-}
+function undo() { if(histIdx>0){histIdx--;restoreHist();} }
+function redo() { if(histIdx<history.length-1){histIdx++;restoreHist();} }
+function restoreHist() { const h=history[histIdx]; elements=h.els.map(e=>({...e})); bgColor=h.bg; selectedEl=null; render(); renderLayers(); renderPropPanel(); }
 
 // ── 패널 전환 ──
-function switchPanel(key, el) {
-  document.querySelectorAll('[id^="panel-"]').forEach(p=>p.style.display='none');
-  document.getElementById('panel-'+key).style.display='block';
-  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
+function switchLP(key, el) {
+  ['product','element','text','image','sticker'].forEach(k=>{
+    const p=document.getElementById('lp-'+k);
+    if(p)p.style.display=k===key?'':'none';
+  });
+  document.querySelectorAll('.lp-tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
 }
 
-// ── 저장 ──
-function saveDesign() { showToast('💾 디자인이 저장되었습니다'); }
+// ── 저장 & 다운로드 ──
+function saveDesign() { showToast('💾 디자인 저장됨'); }
 function downloadDesign() {
-  const link = document.createElement('a');
-  link.download = 'momento-design.png';
-  link.href = canvas.toDataURL('image/png');
+  if (!designCanvas) return;
+  const link=document.createElement('a');
+  link.download='momento-design.png';
+  link.href=designCanvas.toDataURL('image/png');
   link.click();
   showToast('⬇ 다운로드 완료!');
 }
 
-// ── 주문 모달 ──
+// ── 주문 ──
 function openOrderModal() {
-  const prev = document.getElementById('previewCanvas');
-  const pctx = prev.getContext('2d');
-  pctx.drawImage(canvas, 0, 0, 200, 200);
+  if (!designCanvas) return;
+  const prev=document.getElementById('previewCanvas');
+  if (prev) { const ctx=prev.getContext('2d'); ctx.drawImage(designCanvas,0,0,200,200); }
   document.getElementById('orderOverlay').classList.add('open');
 }
-
 function submitOrder() {
   document.getElementById('orderOverlay').classList.remove('open');
-  showToast('✅ 주문이 접수되었습니다! 담당자가 시안을 보내드릴게요 😊');
-  setTimeout(()=>location.href='mypage.html', 2500);
+  showToast('✅ 주문 접수! 담당자가 시안을 보내드릴게요 😊');
+  setTimeout(()=>location.href='mypage.html',2500);
 }
 
+// ── 토스트 ──
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 3000);
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
 }
 
 // ── 키보드 단축키 ──
 document.addEventListener('keydown', e => {
-  if ((e.metaKey||e.ctrlKey)&&e.key==='z') { e.preventDefault(); undo(); }
-  if ((e.metaKey||e.ctrlKey)&&e.key==='y') { e.preventDefault(); redo(); }
-  if (e.key==='Delete'||e.key==='Backspace') {
-    if (document.activeElement===document.body) { deleteSelected(); }
-  }
-  if (e.key==='Escape') { selectedEl=null; render(); renderPropPanel(); }
+  if ((e.metaKey||e.ctrlKey)&&e.key==='z'){e.preventDefault();undo();}
+  if ((e.metaKey||e.ctrlKey)&&e.key==='y'){e.preventDefault();redo();}
+  if (e.key==='Delete'&&document.activeElement===document.body)deleteSelected();
+  if (e.key==='Escape'){selectedEl=null;render();renderPropPanel();}
 });
+
+// ── 리사이즈 대응 ──
+window.addEventListener('resize', ()=>renderStage());
 
 init();
 </script>
