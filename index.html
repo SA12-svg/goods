@@ -6,78 +6,57 @@
 <title>MOMENTO — 기념굿즈 커스텀 쇼핑몰</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
-<!-- Firebase SDK -->
-<script type="module">
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-  import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-  import { getFirestore, doc, getDoc, setDoc, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+<!-- Firebase SDK (설정 완료 후 주석 해제) -->
+<script>
+// Firebase 미설정 시에도 페이지가 정상 동작하도록 폴백 처리
+window._currentUser = null;
+window._firebaseReady = false;
 
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
-  };
+window._signOut = () => {
+  window._currentUser = null;
+  updateNavUI(null);
+  showToast('로그아웃되었습니다');
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+window._addToCart = (product) => {
+  if (!window._currentUser) { openLoginModal(); return; }
+  let cnt = parseInt(document.getElementById('cartBadge').textContent || 0) + (product.qty || 1);
+  document.getElementById('cartBadge').textContent = cnt;
+  showToast('🛒 장바구니에 담겼습니다!');
+};
 
-  window._firebaseAuth = auth;
-  window._firebaseDb = db;
-  window._signOut = () => signOut(auth);
-
-  onAuthStateChanged(auth, async (user) => {
-    window._currentUser = user;
-    updateNavUI(user);
-    if (user) {
-      const ref = doc(db, 'users', user.uid);
-      const snap = await getDoc(ref);
-      if (!snap.exists()) {
-        await setDoc(ref, {
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName || '',
-          photoURL: user.photoURL || '',
-          provider: user.providerData[0]?.providerId || 'email',
-          createdAt: serverTimestamp(),
-          role: 'user'
-        });
-      }
-    }
+// Firebase 연동 준비 (firebaseConfig 교체 후 아래 주석 해제)
+/*
+import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js').then(({ initializeApp }) => {
+  import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js').then(({ getAuth, onAuthStateChanged, signOut }) => {
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    window._firebaseAuth = auth;
+    window._signOut = () => signOut(auth);
+    onAuthStateChanged(auth, (user) => { window._currentUser = user; updateNavUI(user); });
   });
+});
+*/
 
-  function updateNavUI(user) {
-    const authBtns = document.getElementById('authBtns');
-    const userMenu = document.getElementById('userMenu');
-    const userName = document.getElementById('userName');
-    if (!authBtns || !userMenu) return;
-    if (user) {
-      authBtns.style.display = 'none';
-      userMenu.style.display = 'flex';
-      userName.textContent = (user.displayName || user.email || '').split('@')[0];
-    } else {
-      authBtns.style.display = 'flex';
-      userMenu.style.display = 'none';
-    }
+function updateNavUI(user) {
+  const authBtns = document.getElementById('authBtns');
+  const userMenu = document.getElementById('userMenu');
+  const userName = document.getElementById('userName');
+  if (!authBtns || !userMenu) return;
+  if (user) {
+    authBtns.style.display = 'none';
+    userMenu.style.display = 'flex';
+    if (userName) userName.textContent = (user.displayName || user.email || '').split('@')[0];
+  } else {
+    authBtns.style.display = 'flex';
+    userMenu.style.display = 'none';
   }
-
-  window._addToCart = async (product) => {
-    const user = window._currentUser;
-    if (!user) { openLoginModal(); return; }
-    const cartRef = collection(db, 'users', user.uid, 'cart');
-    await addDoc(cartRef, { ...product, addedAt: serverTimestamp() });
-    showToast('장바구니에 담겼습니다 🛒');
-    updateCartBadge();
-  };
-
-  window._updateCartBadge = async () => {
-    const user = window._currentUser;
-    if (!user) return;
-    // 실제 구현시 카트 컬렉션 count 조회
-  };
+}
 </script>
 
 <style>
@@ -613,6 +592,59 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:60px
   <div class="cat-item" onclick="setCat(this,'corp')">기업·단체 <span class="cat-badge">B2B</span></div>
 </nav>
 
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-eyebrow">✦ &nbsp; 나만의 기억을 굿즈로</div>
+    <h1 class="hero-title">
+      소중한 순간을<br>
+      <em>영원히 남기는</em>
+      커스텀 굿즈
+    </h1>
+    <p class="hero-desc">사진 한 장, 텍스트 한 줄로 세상에 하나뿐인 기념 굿즈를 만들어보세요. 졸업, 결혼, 생일, 기업 행사까지 — 모든 특별한 순간을 위한 커스텀 제작.</p>
+    <div class="hero-cta">
+      <button class="btn-hero-main" onclick="document.getElementById('productGrid').scrollIntoView({behavior:'smooth'})">굿즈 둘러보기</button>
+      <button class="btn-hero-sub" onclick="openLoginModal('signup')">무료 회원가입</button>
+    </div>
+    <div class="hero-stats">
+      <div><div class="hero-stat-num">48,000+</div><div class="hero-stat-label">누적 주문</div></div>
+      <div><div class="hero-stat-num">200+</div><div class="hero-stat-label">상품 종류</div></div>
+      <div><div class="hero-stat-num">4.9 ★</div><div class="hero-stat-label">평균 만족도</div></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-cards">
+      <div class="h-card">
+        <div class="h-card-img">🧢</div>
+        <div class="h-card-body">
+          <div class="h-card-cat">CAP</div>
+          <div class="h-card-name">커스텀 볼캡</div>
+          <div class="h-card-price">₩29,900~</div>
+          <div class="h-card-tag">자수 & 와펜</div>
+        </div>
+      </div>
+      <div class="h-card">
+        <div class="h-card-img">📱</div>
+        <div class="h-card-body">
+          <div class="h-card-cat">PHONE CASE</div>
+          <div class="h-card-name">포토 폰케이스</div>
+          <div class="h-card-price">₩12,900~</div>
+          <div class="h-card-tag">사진 업로드</div>
+        </div>
+      </div>
+      <div class="h-card">
+        <div class="h-card-img">☕</div>
+        <div class="h-card-body">
+          <div class="h-card-cat">MUG CUP</div>
+          <div class="h-card-name">커스텀 머그컵</div>
+          <div class="h-card-price">₩15,900~</div>
+          <div class="h-card-tag">텍스트 & 이미지</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- BANNER -->
 <div class="banner-section">
   <div class="banner-wrap">
@@ -985,21 +1017,26 @@ function switchAuthTab(tab){
   document.getElementById('loginModalTitle').textContent = tab==='login'?'로그인':'회원가입';
 }
 
-async function doEmailLogin(){
+function doEmailLogin(){
   const email = document.getElementById('loginEmail').value.trim();
   const pw = document.getElementById('loginPw').value;
   if(!email||!pw){ showToast('이메일과 비밀번호를 입력해주세요'); return; }
-  try {
-    const { signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
-    await signInWithEmailAndPassword(window._firebaseAuth, email, pw);
+  if(window._firebaseAuth) {
+    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js').then(({ signInWithEmailAndPassword }) => {
+      signInWithEmailAndPassword(window._firebaseAuth, email, pw)
+        .then(()=>{ document.getElementById('loginOverlay').classList.remove('open'); showToast('✅ 로그인되었습니다!'); })
+        .catch(e=>{ showToast('❌ ' + (e.code==='auth/wrong-password'?'비밀번호가 틀렸습니다':e.code==='auth/user-not-found'?'존재하지 않는 계정입니다':'로그인 실패')); });
+    });
+  } else {
+    // Firebase 미연동 시 데모 로그인
+    window._currentUser = { displayName: email.split('@')[0], email };
+    updateNavUI(window._currentUser);
     document.getElementById('loginOverlay').classList.remove('open');
-    showToast('✅ 로그인되었습니다!');
-  } catch(e){
-    showToast('❌ ' + (e.code==='auth/wrong-password'?'비밀번호가 틀렸습니다':e.code==='auth/user-not-found'?'존재하지 않는 계정입니다':'로그인 중 오류가 발생했습니다'));
+    showToast('✅ 로그인되었습니다! (데모)');
   }
 }
 
-async function doEmailSignup(){
+function doEmailSignup(){
   const name = document.getElementById('signupName').value.trim();
   const email = document.getElementById('signupEmail').value.trim();
   const pw = document.getElementById('signupPw').value;
@@ -1007,14 +1044,18 @@ async function doEmailSignup(){
   if(!name||!email||!pw){ showToast('모든 항목을 입력해주세요'); return; }
   if(pw.length < 8){ showToast('비밀번호는 8자 이상이어야 합니다'); return; }
   if(pw!==pw2){ showToast('비밀번호가 일치하지 않습니다'); return; }
-  try {
-    const { createUserWithEmailAndPassword, updateProfile } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
-    const cred = await createUserWithEmailAndPassword(window._firebaseAuth, email, pw);
-    await updateProfile(cred.user, { displayName: name });
+  if(window._firebaseAuth) {
+    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js').then(({ createUserWithEmailAndPassword, updateProfile }) => {
+      createUserWithEmailAndPassword(window._firebaseAuth, email, pw)
+        .then(cred=>updateProfile(cred.user,{displayName:name}).then(()=>{ document.getElementById('loginOverlay').classList.remove('open'); showToast('🎉 환영합니다, '+name+'님!'); }))
+        .catch(e=>{ showToast('❌ ' + (e.code==='auth/email-already-in-use'?'이미 사용 중인 이메일입니다':'회원가입 실패')); });
+    });
+  } else {
+    // Firebase 미연동 시 데모 회원가입
+    window._currentUser = { displayName: name, email };
+    updateNavUI(window._currentUser);
     document.getElementById('loginOverlay').classList.remove('open');
-    showToast('🎉 회원가입 완료! 환영합니다, '+name+'님!');
-  } catch(e){
-    showToast('❌ ' + (e.code==='auth/email-already-in-use'?'이미 사용 중인 이메일입니다':'회원가입 중 오류가 발생했습니다'));
+    showToast('🎉 환영합니다, '+name+'님! (데모)');
   }
 }
 
