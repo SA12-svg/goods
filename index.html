@@ -921,11 +921,14 @@ const NEW_PRODUCTS = [
 ];
 
 // ── 상품 렌더링 ──
+function goToProduct(id) { location.href = 'product.html?id=' + id; }
+function goToEditor(id) { location.href = 'editor.html?product=' + id + '&template=t1'; }
+
 function renderProducts(products, containerId) {
   const el = document.getElementById(containerId);
   if (!el) return;
   el.innerHTML = products.map(p => `
-    <div class="prod-card" onclick="openProdModal(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+    <div class="prod-card" onclick="goToProduct('${p.id}')">
       <div class="prod-img">
         ${p.icon}
         <div class="prod-labels">${p.labels.map(l=>`<span class="prod-label ${l}">${{best:'BEST',new:'NEW',hot:'HOT',sale:'SALE'}[l]||l}</span>`).join('')}</div>
@@ -938,7 +941,7 @@ function renderProducts(products, containerId) {
           <span class="prod-price">₩${p.price}~</span>
         </div>
         <div class="prod-opts">${p.opts.slice(0,3).map(o=>`<span class="prod-opt">${o}</span>`).join('')}${p.opts.length>3?`<span class="prod-opt">+${p.opts.length-3}</span>`:''}</div>
-        <button class="add-cart" onclick="event.stopPropagation();openProdModal(${JSON.stringify(p).replace(/"/g,'&quot;')})">커스텀 주문</button>
+        <button class="add-cart" onclick="event.stopPropagation();goToEditor('${p.id}')">🎨 커스텀 주문</button>
       </div>
     </div>
   `).join('');

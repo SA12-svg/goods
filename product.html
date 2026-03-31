@@ -544,7 +544,7 @@ function handleFile(input) {
 // 에디터 열기
 function openEditor() {
   const tmpl = window._selectedTemplate || 't1';
-  location.href = `editor.html?product=${prodId}&template=${tmpl}&model=${encodeURIComponent(selModel)}&material=${encodeURIComponent(selMaterial)}`;
+  location.href = `editor.html?product=${prodId}&template=${tmpl}&model=${encodeURIComponent(selModel)}&material=${encodeURIComponent(selMaterial)}&name=${encodeURIComponent(prod.name)}`;
 }
 
 function addToCart() {
@@ -572,7 +572,7 @@ const RELATED = [
   {name:'커스텀 스티커 세트',price:'₩4,900',emoji:'🏷️'},
 ];
 document.getElementById('relatedGrid').innerHTML = RELATED.map(r=>`
-  <div class="rel-card" onclick="location.href='product.html'">
+  <div class="rel-card" onclick="location.href='product.html?id=p1'">
     <div class="rel-img">${r.emoji}</div>
     <div class="rel-body">
       <div class="rel-name">${r.name}</div>

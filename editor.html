@@ -351,7 +351,8 @@ let bgGradient = null;
 
 // ── 초기화 ──
 function init() {
-  document.getElementById('tbProduct').textContent = decodeURIComponent(params.get('product') || '포토 폰케이스') + ' 편집기';
+  const pName = params.get('name') ? decodeURIComponent(params.get('name')) : (params.get('product') || '포토 폰케이스');
+  document.getElementById('tbProduct').textContent = pName + ' 편집기';
   document.getElementById('orderOption').textContent = modelParam + ' / ' + materialParam;
   renderTemplateThumbs();
   loadTemplate(templateId);

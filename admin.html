@@ -3,704 +3,427 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MOMENTO Admin — 관리자 대시보드</title>
+<title>MOMENTO Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #f7f6f3;
-    --surface: #ffffff;
-    --surface2: #f0ede8;
-    --border: rgba(0,0,0,0.08);
-    --border2: rgba(0,0,0,0.12);
-    --accent: #1a1a1a;
-    --gold: #c4a55a;
-    --gold-light: #f5e8c8;
-    --text: #1a1a1a;
-    --muted: #888;
-    --sidebar-w: 240px;
-    --radius: 12px;
-    --success: #2e7d5e;
-    --warning: #b07c2a;
-    --danger: #c0392b;
-    --info: #2563eb;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', sans-serif; display: flex; min-height: 100vh; font-size: 14px; }
-
-  /* SIDEBAR */
-  .sidebar {
-    width: var(--sidebar-w); background: var(--accent); position: fixed; top: 0; left: 0; bottom: 0;
-    display: flex; flex-direction: column; z-index: 50;
-  }
-  .sidebar-logo { padding: 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
-  .logo-text { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--gold); letter-spacing: 3px; }
-  .logo-sub { color: rgba(255,255,255,0.35); font-size: 10px; letter-spacing: 2px; margin-top: 2px; }
-  .sidebar-nav { flex: 1; padding: 16px 0; overflow-y: auto; }
-  .nav-group { margin-bottom: 24px; }
-  .nav-group-label { font-size: 10px; letter-spacing: 2px; color: rgba(255,255,255,0.3); padding: 0 20px; margin-bottom: 8px; }
-  .nav-item {
-    display: flex; align-items: center; gap: 12px; padding: 10px 20px;
-    color: rgba(255,255,255,0.55); cursor: pointer; transition: all 0.2s;
-    font-size: 13px; border-left: 2px solid transparent;
-  }
-  .nav-item:hover { color: #fff; background: rgba(255,255,255,0.05); }
-  .nav-item.active { color: var(--gold); border-left-color: var(--gold); background: rgba(196,165,90,0.08); }
-  .nav-icon { font-size: 16px; width: 20px; text-align: center; }
-  .nav-badge { margin-left: auto; background: var(--gold); color: #1a1a1a; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
-  .sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
-  .admin-info { display: flex; align-items: center; gap: 10px; }
-  .admin-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 16px; }
-  .admin-name { font-size: 13px; color: #fff; font-weight: 500; }
-  .admin-role { font-size: 11px; color: rgba(255,255,255,0.4); }
-
-  /* MAIN */
-  .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
-
-  /* TOP BAR */
-  .topbar {
-    background: var(--surface); border-bottom: 1px solid var(--border);
-    padding: 0 32px; height: 60px; display: flex; align-items: center; justify-content: space-between;
-    position: sticky; top: 0; z-index: 40;
-  }
-  .topbar-left { display: flex; align-items: center; gap: 16px; }
-  .page-title { font-size: 16px; font-weight: 700; }
-  .breadcrumb { font-size: 12px; color: var(--muted); }
-  .topbar-right { display: flex; align-items: center; gap: 12px; }
-  .topbar-btn { background: none; border: 1px solid var(--border2); border-radius: 8px; padding: 7px 14px; cursor: pointer; font-size: 12px; font-family: inherit; color: var(--text); transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
-  .topbar-btn:hover { background: var(--surface2); }
-  .topbar-btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-  .topbar-btn.primary:hover { background: #333; }
-  .notif-dot { width: 8px; height: 8px; background: var(--danger); border-radius: 50%; display: inline-block; }
-
-  /* CONTENT */
-  .content { padding: 28px 32px; flex: 1; }
-
-  /* TABS */
-  .tabs { display: flex; gap: 4px; margin-bottom: 28px; background: var(--surface2); border-radius: 10px; padding: 4px; }
-  .tab { padding: 8px 18px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--muted); transition: all 0.2s; border: none; background: none; font-family: inherit; }
-  .tab.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-
-  /* METRIC CARDS */
-  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
-  .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; }
-  .metric-label { font-size: 11px; color: var(--muted); letter-spacing: 1px; margin-bottom: 8px; }
-  .metric-value { font-size: 28px; font-weight: 700; line-height: 1; margin-bottom: 6px; }
-  .metric-change { font-size: 12px; }
-  .up { color: var(--success); }
-  .down { color: var(--danger); }
-
-  /* GRID LAYOUT */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-  .grid-3-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
-
-  /* CARD */
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
-  .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-  .card-title { font-size: 14px; font-weight: 700; }
-  .card-action { font-size: 12px; color: var(--gold); cursor: pointer; }
-  .card-body { padding: 20px; }
-
-  /* CHART BAR */
-  .chart-bars { display: flex; align-items: flex-end; gap: 8px; height: 140px; }
-  .bar-wrap { display: flex; flex-direction: column; align-items: center; flex: 1; gap: 6px; }
-  .bar { width: 100%; background: var(--gold-light); border-radius: 4px 4px 0 0; position: relative; overflow: hidden; transition: all 0.3s; cursor: pointer; }
-  .bar::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; background: var(--gold); border-radius: 4px 4px 0 0; }
-  .bar:hover { opacity: 0.85; }
-  .bar-label { font-size: 10px; color: var(--muted); }
-  .bar-val { font-size: 10px; font-weight: 500; }
-
-  /* TABLE */
-  table { width: 100%; border-collapse: collapse; }
-  th { text-align: left; font-size: 11px; color: var(--muted); letter-spacing: 1px; padding: 8px 12px; border-bottom: 1px solid var(--border); font-weight: 500; }
-  td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: var(--surface2); }
-
-  /* BADGES */
-  .badge { display: inline-flex; align-items: center; gap: 4px; border-radius: 20px; padding: 3px 10px; font-size: 11px; font-weight: 500; }
-  .badge-success { background: #e8f5ee; color: var(--success); }
-  .badge-warning { background: #fef3cd; color: var(--warning); }
-  .badge-danger { background: #fde8e8; color: var(--danger); }
-  .badge-info { background: #dbeafe; color: var(--info); }
-  .badge-gray { background: var(--surface2); color: var(--muted); }
-  .badge-gold { background: var(--gold-light); color: #8b6914; }
-
-  /* STATUS DOT */
-  .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
-  .dot-success { background: var(--success); }
-  .dot-warning { background: var(--warning); }
-  .dot-danger { background: var(--danger); }
-  .dot-info { background: var(--info); }
-
-  /* PRODUCT LIST */
-  .prod-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
-  .prod-row:last-child { border-bottom: none; }
-  .prod-thumb { width: 44px; height: 44px; background: var(--surface2); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-  .prod-row-info { flex: 1; }
-  .prod-row-name { font-size: 13px; font-weight: 500; }
-  .prod-row-cat { font-size: 11px; color: var(--muted); }
-  .prod-row-price { font-size: 13px; font-weight: 700; }
-  .prod-row-stock { font-size: 12px; }
-
-  /* ORDER INQUIRY PANEL */
-  .inquiry-card { border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s; }
-  .inquiry-card:hover { border-color: var(--gold); }
-  .inquiry-card.urgent { border-left: 3px solid var(--danger); }
-  .inquiry-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-  .inquiry-name { font-weight: 600; font-size: 13px; }
-  .inquiry-time { font-size: 11px; color: var(--muted); }
-  .inquiry-product { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-  .inquiry-preview { font-size: 12px; color: #555; line-height: 1.5; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-
-  /* PRODUCT REGISTER PANEL */
-  .reg-panel { display: none; }
-  .reg-panel.active { display: block; }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .field { margin-bottom: 18px; }
-  .field-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; display: block; letter-spacing: 0.5px; }
-  .field-input, .field-select, .field-textarea {
-    width: 100%; border: 1px solid var(--border2); border-radius: 8px; padding: 10px 12px;
-    font-family: inherit; font-size: 13px; outline: none; background: #fff; transition: border 0.2s; color: var(--text);
-  }
-  .field-input:focus, .field-select:focus, .field-textarea:focus { border-color: var(--gold); }
-  .field-textarea { resize: none; height: 80px; }
-  .option-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-  .option-tag { background: var(--gold-light); color: #8b6914; border-radius: 6px; padding: 4px 10px; font-size: 12px; display: flex; align-items: center; gap: 4px; }
-  .option-tag-rm { cursor: pointer; opacity: 0.6; }
-  .option-tag-rm:hover { opacity: 1; }
-  .add-option-row { display: flex; gap: 8px; margin-top: 8px; }
-  .add-option-input { flex: 1; border: 1px dashed var(--border2); border-radius: 6px; padding: 8px 10px; font-family: inherit; font-size: 12px; outline: none; background: none; color: var(--text); }
-  .add-option-btn { border: none; background: var(--gold); color: #1a1a1a; border-radius: 6px; padding: 8px 14px; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600; }
-  .upload-box { border: 2px dashed var(--border2); border-radius: 10px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.2s; }
-  .upload-box:hover { border-color: var(--gold); background: var(--gold-light); }
-  .upload-box-icon { font-size: 36px; margin-bottom: 8px; }
-  .upload-box-text { font-size: 13px; color: var(--muted); }
-  .save-btn { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 12px 28px; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-  .save-btn:hover { background: #333; }
-
-  /* MINI CHART */
-  .mini-bar { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; margin: 4px 0; }
-  .mini-bar-fill { height: 100%; border-radius: 3px; background: var(--gold); }
-
-  /* RECENT UPLOADS */
-  .upload-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .upload-thumb { aspect-ratio: 1; background: var(--surface2); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 28px; position: relative; cursor: pointer; overflow: hidden; }
-  .upload-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; font-size: 12px; color: #fff; opacity: 0; transition: 0.2s; }
-  .upload-thumb:hover .upload-overlay { opacity: 1; }
-
-  /* TOAST */
-  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--accent); color: #fff; border-radius: 10px; padding: 14px 20px; font-size: 13px; display: flex; align-items: center; gap: 10px; z-index: 9999; transform: translateY(80px); opacity: 0; transition: all 0.4s; }
-  .toast.show { transform: translateY(0); opacity: 1; }
-
-  /* MODAL */
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: center; justify-content: center; }
-  .overlay.open { display: flex; }
-  .modal { background: #fff; border-radius: 16px; width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto; }
-  .modal-hd { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 15px; }
-  .modal-bd { padding: 24px; }
-  .close-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--muted); }
-
-  /* SELECT ROW */
-  .sel-row { display: flex; align-items: center; gap: 12px; }
-  .sel-row select { border: 1px solid var(--border2); border-radius: 8px; padding: 8px 10px; font-family: inherit; font-size: 12px; outline: none; background: #fff; color: var(--text); }
-  .search-input { border: 1px solid var(--border2); border-radius: 8px; padding: 8px 12px; font-family: inherit; font-size: 12px; outline: none; background: #fff; color: var(--text); width: 200px; }
-  .search-input:focus { border-color: var(--gold); }
+:root{--bg:#f4f3f0;--sur:#fff;--sur2:#f0ede8;--sur3:#e8e5e0;--bd:rgba(0,0,0,.07);--bd2:rgba(0,0,0,.12);--sb:#1a1a1a;--gold:#c4a55a;--gdim:rgba(196,165,90,.12);--tx:#1a1a1a;--mu:#888;--r:12px;--ok:#2e7d5e;--warn:#b07c2a;--err:#c0392b;--info:#2563eb;--sw:240px;--tb:60px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--tx);font-family:'Noto Sans KR',sans-serif;display:flex;min-height:100vh;font-size:14px;}
+.sidebar{width:var(--sw);background:var(--sb);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:100;}
+.sb-logo{padding:22px 20px;border-bottom:1px solid rgba(255,255,255,.07);}
+.sb-logo-tx{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold);letter-spacing:3px;}
+.sb-logo-sub{font-size:10px;color:rgba(255,255,255,.25);letter-spacing:2px;margin-top:2px;}
+.sb-nav{flex:1;padding:12px 0;overflow-y:auto;}
+.sb-grp{margin-bottom:18px;}
+.sb-grp-lbl{font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.22);padding:0 20px;margin-bottom:5px;}
+.si{display:flex;align-items:center;gap:10px;padding:9px 20px;color:rgba(255,255,255,.48);cursor:pointer;transition:all .2s;font-size:13px;border-left:2px solid transparent;}
+.si:hover{color:#fff;background:rgba(255,255,255,.04);}
+.si.active{color:var(--gold);border-left-color:var(--gold);background:rgba(196,165,90,.07);}
+.si-ic{font-size:15px;width:20px;text-align:center;}
+.si-badge{margin-left:auto;background:var(--gold);color:#1a1a1a;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;}
+.si-badge.red{background:#f87171;color:#fff;}
+.sb-ft{padding:14px 20px;border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px;}
+.sb-av{width:34px;height:34px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:14px;}
+.sb-nm{font-size:13px;color:#fff;font-weight:500;}
+.sb-rl{font-size:11px;color:rgba(255,255,255,.32);}
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;}
+.topbar{height:var(--tb);background:var(--sur);border-bottom:1px solid var(--bd);padding:0 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.tb-l{display:flex;align-items:center;gap:10px;}
+.tb-title{font-size:16px;font-weight:700;}
+.tb-bc{font-size:12px;color:var(--mu);}
+.tb-r{display:flex;align-items:center;gap:8px;}
+.btn{border:1px solid var(--bd2);border-radius:8px;padding:7px 14px;font-size:12px;cursor:pointer;font-family:inherit;color:var(--tx);background:var(--sur);transition:all .2s;}
+.btn:hover{background:var(--sur2);}
+.btn.dark{background:var(--sb);color:#fff;border-color:var(--sb);}
+.btn.dark:hover{background:#333;}
+.btn.gold{background:var(--gold);color:#fff;border-color:var(--gold);font-weight:700;}
+.btn.gold:hover{background:#b8943e;}
+.btn.danger{background:#fde8e8;color:var(--err);border-color:#fca5a5;}
+.content{padding:24px 28px;flex:1;}
+.card{background:var(--sur);border:1px solid var(--bd);border-radius:var(--r);}
+.card-hd{padding:15px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:14px;font-weight:700;}
+.card-action{font-size:12px;color:var(--gold);cursor:pointer;}
+.card-bd{padding:20px;}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.metric{background:var(--sur);border:1px solid var(--bd);border-radius:var(--r);padding:18px 20px;}
+.m-lbl{font-size:11px;color:var(--mu);margin-bottom:8px;}
+.m-val{font-size:26px;font-weight:700;line-height:1;margin-bottom:5px;}
+.m-chg{font-size:12px;}
+.up{color:var(--ok);}
+.dn{color:var(--err);}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;font-size:11px;color:var(--mu);padding:8px 12px;border-bottom:1px solid var(--bd);font-weight:500;}
+td{padding:10px 12px;border-bottom:1px solid var(--bd);font-size:13px;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--sur2);}
+.badge{display:inline-flex;align-items:center;border-radius:20px;padding:3px 9px;font-size:11px;font-weight:500;}
+.bs{background:#e8f5ee;color:var(--ok);}
+.bw{background:#fef3cd;color:var(--warn);}
+.bd2{background:#fde8e8;color:var(--err);}
+.bi{background:#dbeafe;color:var(--info);}
+.bg{background:var(--sur2);color:var(--mu);}
+.bgo{background:var(--gdim);color:#8b6914;}
+.field{margin-bottom:14px;}
+.fl{display:block;font-size:12px;color:var(--mu);margin-bottom:5px;}
+.fi,.fs,.ft{width:100%;border:1px solid var(--bd2);border-radius:8px;padding:9px 12px;font-family:inherit;font-size:13px;outline:none;background:#fff;color:var(--tx);transition:border .2s;}
+.fi:focus,.fs:focus,.ft:focus{border-color:var(--gold);}
+.ft{resize:none;height:80px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.fbar{display:flex;gap:8px;margin-bottom:14px;align-items:center;flex-wrap:wrap;}
+.si-input{border:1px solid var(--bd2);border-radius:8px;padding:8px 12px;font-family:inherit;font-size:13px;outline:none;background:#fff;width:200px;transition:border .2s;}
+.si-input:focus{border-color:var(--gold);}
+.fs-sm{border:1px solid var(--bd2);border-radius:8px;padding:8px 10px;font-family:inherit;font-size:13px;outline:none;background:#fff;color:var(--tx);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.g31{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
+.g21{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start;}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:100px;}
+.bar-w{display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;}
+.bar-b{width:100%;background:var(--gdim);border-radius:4px 4px 0 0;position:relative;min-height:4px;}
+.bar-b:hover{opacity:.8;}
+.bar-fill{position:absolute;bottom:0;left:0;right:0;background:var(--gold);border-radius:4px 4px 0 0;}
+.bar-lbl{font-size:10px;color:var(--mu);}
+.bar-val{font-size:10px;font-weight:600;}
+.mini-bar{height:5px;background:var(--sur2);border-radius:3px;overflow:hidden;margin:3px 0;}
+.mini-bar-fill{height:100%;border-radius:3px;background:var(--gold);}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;align-items:center;justify-content:center;}
+.overlay.open{display:flex;}
+.modal{background:var(--sur);border-radius:16px;width:90%;max-width:600px;max-height:90vh;overflow-y:auto;}
+.modal.lg{max-width:860px;}
+.m-hd{padding:18px 22px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:15px;position:sticky;top:0;background:var(--sur);z-index:2;}
+.m-bd{padding:22px;}
+.m-ft{padding:14px 22px;border-top:1px solid var(--bd);display:flex;gap:8px;justify-content:flex-end;}
+.close-btn{background:none;border:none;font-size:20px;cursor:pointer;color:var(--mu);}
+.prod-thumb{width:42px;height:42px;border-radius:8px;background:var(--sur2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.opt-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
+.opt-tag{background:var(--gdim);color:#8b6914;border-radius:6px;padding:3px 9px;font-size:12px;display:flex;align-items:center;gap:4px;}
+.ot-rm{cursor:pointer;opacity:.5;}
+.ot-rm:hover{opacity:1;}
+.add-opt-row{display:flex;gap:6px;margin-top:7px;}
+.add-opt-in{flex:1;border:1px dashed var(--bd2);border-radius:6px;padding:7px 10px;font-family:inherit;font-size:12px;outline:none;background:none;}
+.add-opt-in:focus{border-color:var(--gold);}
+.add-opt-btn{border:none;background:var(--gold);color:#1a1a1a;border-radius:6px;padding:7px 14px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;}
+.prev-card{border:1px solid var(--bd);border-radius:12px;overflow:hidden;position:sticky;top:80px;}
+.prev-img{height:180px;background:var(--sur2);display:flex;align-items:center;justify-content:center;font-size:64px;}
+.prev-body{padding:14px;}
+.prev-cat{font-size:10px;color:var(--mu);letter-spacing:1px;margin-bottom:3px;}
+.prev-name{font-size:15px;font-weight:700;margin-bottom:5px;}
+.prev-price{font-size:20px;font-weight:700;color:var(--gold);margin-bottom:10px;}
+.prev-opts{display:flex;flex-wrap:wrap;gap:4px;}
+.prev-opt{background:var(--sur2);border-radius:4px;padding:2px 7px;font-size:11px;color:var(--mu);}
+.upload-box{border:2px dashed var(--bd2);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:all .2s;}
+.upload-box:hover{border-color:var(--gold);background:var(--gdim);}
+.tmpl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.tmpl-card{border:1px solid var(--bd);border-radius:10px;overflow:hidden;transition:all .2s;}
+.tmpl-card:hover{border-color:var(--gold);transform:translateY(-2px);}
+.tmpl-prev{height:130px;display:flex;align-items:center;justify-content:center;position:relative;}
+.tmpl-info{padding:10px 12px;border-top:1px solid var(--bd);}
+.tmpl-nm{font-size:12px;font-weight:600;margin-bottom:3px;}
+.tmpl-mt{font-size:11px;color:var(--mu);margin-bottom:7px;}
+.tmpl-acts{display:flex;gap:4px;}
+.tmpl-btn{flex:1;padding:5px;border:1px solid var(--bd2);background:none;border-radius:5px;font-size:11px;cursor:pointer;font-family:inherit;transition:all .2s;}
+.tmpl-btn:hover{border-color:var(--gold);color:var(--gold);}
+.tmpl-btn.del{border-color:#fca5a5;color:var(--err);}
+.inq-card{border:1px solid var(--bd);border-radius:8px;padding:12px;cursor:pointer;transition:all .2s;margin-bottom:8px;}
+.inq-card:hover{border-color:var(--gold);}
+.link-status{display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--sur2);border-radius:8px;margin-bottom:8px;}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--sb);color:#fff;border-radius:10px;padding:12px 18px;font-size:13px;z-index:9999;transform:translateY(60px);opacity:0;transition:all .3s;}
+.toast.show{transform:translateY(0);opacity:1;}
 </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
 <aside class="sidebar">
-  <div class="sidebar-logo">
-    <div class="logo-text">MOMENTO</div>
-    <div class="logo-sub">ADMIN DASHBOARD</div>
+  <div class="sb-logo">
+    <div class="sb-logo-tx">MOMENTO</div>
+    <div class="sb-logo-sub">ADMIN</div>
   </div>
-  <nav class="sidebar-nav">
-    <div class="nav-group">
-      <div class="nav-group-label">OVERVIEW</div>
-      <div class="nav-item active" onclick="switchTab('dashboard')">
-        <span class="nav-icon">📊</span> 대시보드
-      </div>
+  <nav class="sb-nav">
+    <div class="sb-grp">
+      <div class="sb-grp-lbl">OVERVIEW</div>
+      <div class="si active" onclick="go('dashboard',this)"><span class="si-ic">📊</span>대시보드</div>
     </div>
-    <div class="nav-group">
-      <div class="nav-group-label">ORDERS</div>
-      <div class="nav-item" onclick="switchTab('orders')">
-        <span class="nav-icon">📦</span> 주문 관리
-        <span class="nav-badge">12</span>
-      </div>
-      <div class="nav-item" onclick="switchTab('inquiries')">
-        <span class="nav-icon">💬</span> 커스텀 문의
-        <span class="nav-badge">5</span>
-      </div>
+    <div class="sb-grp">
+      <div class="sb-grp-lbl">ORDERS</div>
+      <div class="si" onclick="go('orders',this)"><span class="si-ic">📦</span>주문 관리<span class="si-badge red">12</span></div>
+      <div class="si" onclick="go('inquiries',this)"><span class="si-ic">💬</span>커스텀 문의<span class="si-badge">5</span></div>
     </div>
-    <div class="nav-group">
-      <div class="nav-group-label">CATALOG</div>
-      <div class="nav-item" onclick="switchTab('products')">
-        <span class="nav-icon">🎁</span> 상품 관리
-      </div>
-      <div class="nav-item" onclick="switchTab('register')">
-        <span class="nav-icon">➕</span> 상품 등록
-      </div>
-      <div class="nav-item" onclick="switchTab('uploads')">
-        <span class="nav-icon">🖼️</span> 고객 업로드 파일
-      </div>
+    <div class="sb-grp">
+      <div class="sb-grp-lbl">CATALOG</div>
+      <div class="si" onclick="go('products',this)"><span class="si-ic">🎁</span>상품 관리</div>
+      <div class="si" onclick="go('product-new',this)"><span class="si-ic">➕</span>상품 등록</div>
+      <div class="si" onclick="go('templates',this)"><span class="si-ic">🎨</span>템플릿 관리</div>
+      <div class="si" onclick="go('uploads',this)"><span class="si-ic">🖼️</span>고객 파일</div>
     </div>
-    <div class="nav-group">
-      <div class="nav-group-label">USERS</div>
-      <div class="nav-item" onclick="switchTab('customers')">
-        <span class="nav-icon">👥</span> 회원 관리
-      </div>
+    <div class="sb-grp">
+      <div class="sb-grp-lbl">USERS</div>
+      <div class="si" onclick="go('customers',this)"><span class="si-ic">👥</span>회원 관리</div>
     </div>
-    <div class="nav-group">
-      <div class="nav-group-label">SETTINGS</div>
-      <div class="nav-item" onclick="switchTab('settings')">
-        <span class="nav-icon">⚙️</span> 설정
-      </div>
+    <div class="sb-grp">
+      <div class="sb-grp-lbl">SITE</div>
+      <div class="si" onclick="go('settings',this)"><span class="si-ic">⚙️</span>사이트 설정</div>
+      <div class="si" onclick="window.open('index.html')"><span class="si-ic">🌐</span>쇼핑몰 보기</div>
     </div>
   </nav>
-  <div class="sidebar-footer">
-    <div class="admin-info">
-      <div class="admin-avatar">👤</div>
-      <div>
-        <div class="admin-name">관리자</div>
-        <div class="admin-role">Super Admin</div>
-      </div>
-    </div>
+  <div class="sb-ft">
+    <div class="sb-av">👤</div>
+    <div><div class="sb-nm">관리자</div><div class="sb-rl">Super Admin</div></div>
   </div>
 </aside>
 
-<!-- MAIN -->
 <div class="main">
   <div class="topbar">
-    <div class="topbar-left">
-      <div class="page-title" id="pageTitle">대시보드</div>
-      <div class="breadcrumb" id="breadcrumb">MOMENTO / 대시보드</div>
+    <div class="tb-l">
+      <div class="tb-title" id="pageTitle">대시보드</div>
+      <div class="tb-bc" id="pageBC">MOMENTO / 대시보드</div>
     </div>
-    <div class="topbar-right">
-      <button class="topbar-btn" onclick="showToast('알림이 없습니다')">🔔 <span class="notif-dot"></span></button>
-      <button class="topbar-btn" onclick="switchTab('register')">+ 상품 등록</button>
-      <button class="topbar-btn primary" onclick="openShop()">🛍️ 쇼핑몰 보기</button>
+    <div class="tb-r">
+      <button class="btn" onclick="go('product-new',document.querySelectorAll('.si')[5])">+ 상품 등록</button>
+      <button class="btn gold" onclick="window.open('index.html')">🌐 쇼핑몰</button>
     </div>
   </div>
-
   <div class="content">
 
-    <!-- === DASHBOARD === -->
+    <!-- 대시보드 -->
     <div id="tab-dashboard">
       <div class="metrics">
-        <div class="metric-card">
-          <div class="metric-label">오늘 매출</div>
-          <div class="metric-value">₩1,284,000</div>
-          <div class="metric-change up">↑ 12.4% 어제 대비</div>
+        <div class="metric"><div class="m-lbl">오늘 매출</div><div class="m-val">₩1,284,000</div><div class="m-chg up">↑ 12.4%</div></div>
+        <div class="metric"><div class="m-lbl">이번 주 주문</div><div class="m-val">147</div><div class="m-chg up">↑ 8건</div></div>
+        <div class="metric"><div class="m-lbl">처리 대기</div><div class="m-val" style="color:var(--err)">12</div><div class="m-chg" style="color:var(--mu)">제작 시작 필요</div></div>
+        <div class="metric"><div class="m-lbl">미답변 문의</div><div class="m-val" style="color:var(--warn)">5</div><div class="m-chg" style="color:var(--mu)">커스텀 문의</div></div>
+      </div>
+      <div class="g31">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">주간 매출 (만원)</div><span class="card-action" onclick="go('orders',document.querySelectorAll('.si')[1])">전체 주문 →</span></div>
+          <div class="card-bd"><div class="chart-bars" id="salesChart"></div></div>
         </div>
-        <div class="metric-card">
-          <div class="metric-label">이번 주 주문</div>
-          <div class="metric-value">147</div>
-          <div class="metric-change up">↑ 8건 전주 대비</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">처리 대기</div>
-          <div class="metric-value" style="color: var(--danger);">12</div>
-          <div class="metric-change" style="color: var(--muted);">제작 시작 필요</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">커스텀 문의</div>
-          <div class="metric-value" style="color: var(--warning);">5</div>
-          <div class="metric-change" style="color: var(--muted);">미답변 문의</div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">카테고리별</div></div>
+          <div class="card-bd" id="catChart"></div>
         </div>
       </div>
-
-      <div class="grid-3-1">
-        <!-- 매출 차트 -->
+      <div class="g2">
         <div class="card">
-          <div class="card-header">
-            <div class="card-title">주간 매출 현황</div>
-            <div class="card-action" onclick="showToast('상세 리포트는 준비 중입니다')">상세 보기</div>
-          </div>
-          <div class="card-body">
-            <div style="color: var(--muted); font-size: 11px; margin-bottom: 12px;">단위: 만원</div>
-            <div class="chart-bars" id="salesChart"></div>
-          </div>
+          <div class="card-hd"><div class="card-title">최근 주문</div><span class="card-action" onclick="go('orders',document.querySelectorAll('.si')[1])">전체 →</span></div>
+          <div style="overflow-x:auto"><table><thead><tr><th>주문번호</th><th>고객</th><th>상품</th><th>금액</th><th>상태</th><th></th></tr></thead><tbody id="dash-orders"></tbody></table></div>
         </div>
-        <!-- 카테고리 -->
         <div class="card">
-          <div class="card-header"><div class="card-title">카테고리별 매출</div></div>
-          <div class="card-body">
-            <div style="display:flex;flex-direction:column;gap:10px;">
-              <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span>폰케이스</span><span style="font-weight:600">34%</span></div><div class="mini-bar"><div class="mini-bar-fill" style="width:34%"></div></div></div>
-              <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span>의류</span><span style="font-weight:600">28%</span></div><div class="mini-bar"><div class="mini-bar-fill" style="width:28%"></div></div></div>
-              <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span>포토북</span><span style="font-weight:600">18%</span></div><div class="mini-bar"><div class="mini-bar-fill" style="width:18%"></div></div></div>
-              <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span>머그컵</span><span style="font-weight:600">12%</span></div><div class="mini-bar"><div class="mini-bar-fill" style="width:12%"></div></div></div>
-              <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span>기타</span><span style="font-weight:600">8%</span></div><div class="mini-bar"><div class="mini-bar-fill" style="width:8%"></div></div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid-2">
-        <!-- 최근 주문 -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">최근 주문</div>
-            <div class="card-action" onclick="switchTab('orders')">전체 보기</div>
-          </div>
-          <div class="card-body" style="padding:0">
-            <table>
-              <thead><tr><th>주문번호</th><th>고객</th><th>상품</th><th>금액</th><th>상태</th></tr></thead>
-              <tbody>
-                <tr><td>#ORD-2847</td><td>김지수</td><td>폰케이스 ×1</td><td>₩12,900</td><td><span class="badge badge-warning">제작중</span></td></tr>
-                <tr><td>#ORD-2846</td><td>박영우</td><td>머그컵 ×10</td><td>₩159,000</td><td><span class="badge badge-info">검토중</span></td></tr>
-                <tr><td>#ORD-2845</td><td>이소연</td><td>키링 ×250</td><td>₩2,225,000</td><td><span class="badge badge-success">완료</span></td></tr>
-                <tr><td>#ORD-2844</td><td>최민준</td><td>후드티 ×3</td><td>₩116,700</td><td><span class="badge badge-warning">제작중</span></td></tr>
-                <tr><td>#ORD-2843</td><td>정하은</td><td>포토북 ×1</td><td>₩24,900</td><td><span class="badge badge-success">배송중</span></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- 미답변 문의 -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">커스텀 문의 <span style="color:var(--danger); font-size:12px; font-weight:400; margin-left:6px;">5건 미답변</span></div>
-            <div class="card-action" onclick="switchTab('inquiries')">전체 보기</div>
-          </div>
-          <div class="card-body">
-            <div class="inquiry-card urgent" onclick="openInquiry('김현수', '후드티 기업 단체 주문 100벌', '안녕하세요, 회사 창립 20주년 기념 후드티를 100벌 제작하고 싶은데요...')">
-              <div class="inquiry-top"><div class="inquiry-name">김현수</div><div class="inquiry-time">10분 전</div></div>
-              <div class="inquiry-product">후드티 · 100개 이상 · 기업주문</div>
-              <div class="inquiry-preview">안녕하세요, 회사 창립 20주년 기념 후드티를 100벌 제작하고 싶은데요. 로고 자수와 등판 프린트 모두 가능한지 견적 부탁드립니다.</div>
-            </div>
-            <div class="inquiry-card" onclick="openInquiry('송민아', '결혼식 답례품 포토 키링', '결혼식 하객 300명 답례품으로 커플 사진 키링을 만들고 싶어요...')">
-              <div class="inquiry-top"><div class="inquiry-name">송민아</div><div class="inquiry-time">1시간 전</div></div>
-              <div class="inquiry-product">키링 · 100개 이상 · 웨딩</div>
-              <div class="inquiry-preview">결혼식 하객 300명 답례품으로 커플 사진 키링을 만들고 싶어요. 아크릴로 하면 얼마나 나올까요?</div>
-            </div>
-            <div class="inquiry-card" onclick="openInquiry('류재원', '달력 50부 학교 졸업 기념', '고등학교 졸업 기념으로 우리 반 사진으로 달력을 만들고 싶어요...')">
-              <div class="inquiry-top"><div class="inquiry-name">류재원</div><div class="inquiry-time">3시간 전</div></div>
-              <div class="inquiry-product">달력 · 50개 · 졸업기념</div>
-              <div class="inquiry-preview">고등학교 졸업 기념으로 우리 반 사진으로 달력을 50부 만들고 싶어요. 학생들이 같이 사진을 올릴 수 있나요?</div>
-            </div>
-          </div>
+          <div class="card-hd"><div class="card-title">미답변 문의</div><span class="card-action" onclick="go('inquiries',document.querySelectorAll('.si')[2])">전체 →</span></div>
+          <div class="card-bd" id="dash-inq"></div>
         </div>
       </div>
     </div>
 
-    <!-- === ORDERS === -->
+    <!-- 주문 관리 -->
     <div id="tab-orders" style="display:none">
-      <div style="display:flex;gap:12px;margin-bottom:20px;align-items:center;">
-        <input class="search-input" placeholder="주문번호, 고객명 검색...">
-        <select style="border:1px solid var(--border2);border-radius:8px;padding:8px 10px;font-family:inherit;font-size:12px;outline:none;background:#fff;color:var(--text);">
-          <option>전체 상태</option><option>검토중</option><option>제작중</option><option>배송중</option><option>완료</option>
-        </select>
-        <select style="border:1px solid var(--border2);border-radius:8px;padding:8px 10px;font-family:inherit;font-size:12px;outline:none;background:#fff;color:var(--text);">
-          <option>전체 카테고리</option><option>폰케이스</option><option>의류</option><option>머그컵</option><option>포토북</option>
-        </select>
+      <div class="fbar">
+        <input class="si-input" placeholder="주문번호, 고객명 검색..." oninput="filterOrders(this.value)">
+        <select class="fs-sm" onchange="filterOrderStatus(this.value)"><option value="">전체 상태</option><option>검토중</option><option>제작중</option><option>배송중</option><option>완료</option></select>
+        <select class="fs-sm"><option>전체 카테고리</option><option>폰케이스</option><option>의류</option><option>머그컵</option></select>
+        <button class="btn" onclick="toast('📥 CSV 내보내기 (Firebase 연동 후 활성화)')">내보내기</button>
+        <span id="orderCnt" style="font-size:12px;color:var(--mu);margin-left:auto"></span>
       </div>
-      <div class="card">
-        <div class="card-header"><div class="card-title">전체 주문 목록</div><div style="font-size:12px;color:var(--muted)">총 147건 (이번 주)</div></div>
-        <div class="card-body" style="padding:0">
-          <table>
-            <thead><tr><th>주문번호</th><th>고객명</th><th>상품</th><th>이미지</th><th>옵션</th><th>수량</th><th>금액</th><th>주문일시</th><th>상태</th><th>액션</th></tr></thead>
-            <tbody id="orderTable"></tbody>
-          </table>
-        </div>
-      </div>
+      <div class="card"><div style="overflow-x:auto"><table><thead><tr><th>주문번호</th><th>고객</th><th>상품</th><th>옵션</th><th>파일</th><th>금액</th><th>일시</th><th>상태</th><th>관리</th></tr></thead><tbody id="orderTbl"></tbody></table></div></div>
     </div>
 
-    <!-- === INQUIRIES === -->
+    <!-- 커스텀 문의 -->
     <div id="tab-inquiries" style="display:none">
-      <div class="grid-3-1">
-        <div class="card">
-          <div class="card-header"><div class="card-title">커스텀 주문 문의 목록</div></div>
-          <div class="card-body">
-            <div id="inquiryList"></div>
-          </div>
+      <div class="g31">
+        <div>
+          <div class="fbar"><input class="si-input" placeholder="문의 검색..."><select class="fs-sm"><option>전체</option><option>미답변</option><option>답변완료</option></select></div>
+          <div id="inqList"></div>
         </div>
-        <div class="card" id="inquiryDetail" style="position:sticky;top:80px;align-self:start;">
-          <div class="card-header"><div class="card-title">문의 상세</div></div>
-          <div class="card-body" style="color:var(--muted);font-size:13px;text-align:center;padding:40px 20px;">
-            문의를 선택하면<br>상세 내용이 표시됩니다
-          </div>
+        <div class="card" id="inqDetail" style="position:sticky;top:80px;align-self:start;">
+          <div class="card-hd"><div class="card-title">문의 상세</div></div>
+          <div class="card-bd" style="text-align:center;color:var(--mu);font-size:13px;padding:40px 0">문의를 선택하세요</div>
         </div>
       </div>
     </div>
 
-    <!-- === PRODUCTS === -->
+    <!-- 상품 관리 -->
     <div id="tab-products" style="display:none">
-      <div style="display:flex;justify-content:space-between;margin-bottom:20px;align-items:center;">
-        <input class="search-input" placeholder="상품명 검색...">
-        <button class="save-btn" onclick="switchTab('register')" style="padding:9px 20px">+ 새 상품 등록</button>
+      <div class="fbar">
+        <input class="si-input" placeholder="상품명 검색...">
+        <select class="fs-sm"><option>전체 카테고리</option><option>폰케이스</option><option>의류</option><option>머그컵</option><option>포토북</option></select>
+        <select class="fs-sm"><option>전체 상태</option><option>판매중</option><option>품절임박</option><option>판매중지</option></select>
+        <button class="btn gold" onclick="go('product-new',document.querySelectorAll('.si')[5])">+ 새 상품 등록</button>
       </div>
-      <div class="card">
-        <div class="card-header"><div class="card-title">전체 상품</div><div style="font-size:12px;color:var(--muted)">총 32개</div></div>
-        <div class="card-body" style="padding:0">
-          <table>
-            <thead><tr><th>상품</th><th>카테고리</th><th>가격</th><th>옵션 수</th><th>이미지 업로드</th><th>상태</th><th>관리</th></tr></thead>
-            <tbody>
-              <tr>
-                <td><div style="display:flex;align-items:center;gap:10px;"><div class="prod-thumb">📱</div><div><div style="font-weight:500;">나만의 포토 폰케이스</div><div style="font-size:11px;color:var(--muted)">#PRD-001</div></div></div></td>
-                <td>폰케이스</td><td>₩12,900~</td><td><span class="badge badge-gold">기종 4 / 재질 3</span></td>
-                <td><span class="badge badge-success">✓ 가능</span></td>
-                <td><span class="badge badge-success">판매중</span></td>
-                <td><button class="topbar-btn" onclick="switchTab('register');showToast('상품 수정 모드')">수정</button></td>
-              </tr>
-              <tr>
-                <td><div style="display:flex;align-items:center;gap:10px;"><div class="prod-thumb">☕</div><div><div style="font-weight:500;">커스텀 포토 머그컵</div><div style="font-size:11px;color:var(--muted)">#PRD-002</div></div></div></td>
-                <td>머그컵</td><td>₩15,900~</td><td><span class="badge badge-gold">색상 5 / 재질 2</span></td>
-                <td><span class="badge badge-success">✓ 가능</span></td>
-                <td><span class="badge badge-success">판매중</span></td>
-                <td><button class="topbar-btn" onclick="switchTab('register');showToast('상품 수정 모드')">수정</button></td>
-              </tr>
-              <tr>
-                <td><div style="display:flex;align-items:center;gap:10px;"><div class="prod-thumb">👕</div><div><div style="font-weight:500;">커스텀 오버핏 후드티</div><div style="font-size:11px;color:var(--muted)">#PRD-003</div></div></div></td>
-                <td>의류</td><td>₩38,900~</td><td><span class="badge badge-gold">사이즈 5 / 색상 3</span></td>
-                <td><span class="badge badge-success">✓ 가능</span></td>
-                <td><span class="badge badge-warning">품절임박</span></td>
-                <td><button class="topbar-btn">수정</button></td>
-              </tr>
-              <tr>
-                <td><div style="display:flex;align-items:center;gap:10px;"><div class="prod-thumb">📖</div><div><div style="font-weight:500;">프리미엄 커스텀 포토북</div><div style="font-size:11px;color:var(--muted)">#PRD-004</div></div></div></td>
-                <td>포토북</td><td>₩24,900~</td><td><span class="badge badge-gold">사이즈 4 / 제본 3</span></td>
-                <td><span class="badge badge-success">✓ 가능</span></td>
-                <td><span class="badge badge-success">판매중</span></td>
-                <td><button class="topbar-btn">수정</button></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <div class="card"><table><thead><tr><th>상품</th><th>카테고리</th><th>가격</th><th>옵션</th><th>커스텀</th><th>템플릿</th><th>상태</th><th>관리</th></tr></thead><tbody id="prodTbl"></tbody></table></div>
     </div>
 
-    <!-- === PRODUCT REGISTER === -->
-    <div id="tab-register" style="display:none">
-      <div style="display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start;">
+    <!-- 상품 등록/수정 -->
+    <div id="tab-product-new" style="display:none">
+      <div class="g21">
         <div>
-          <!-- 기본 정보 -->
-          <div class="card" style="margin-bottom:16px;">
-            <div class="card-header"><div class="card-title">기본 정보</div></div>
-            <div class="card-body">
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-hd"><div class="card-title">기본 정보</div></div>
+            <div class="card-bd">
               <div class="form-row">
-                <div class="field">
-                  <label class="field-label">상품명 *</label>
-                  <input class="field-input" placeholder="예: 나만의 포토 폰케이스" id="prodName">
-                </div>
-                <div class="field">
-                  <label class="field-label">카테고리 *</label>
-                  <select class="field-select" id="prodCat">
-                    <option value="">카테고리 선택</option>
-                    <option>폰케이스</option><option>의류 (후드티/티셔츠)</option>
-                    <option>머그컵</option><option>포토북</option>
-                    <option>달력</option><option>키링</option><option>에코백</option><option>기타</option>
-                  </select>
-                </div>
+                <div class="field"><label class="fl">상품명 *</label><input class="fi" id="pName" placeholder="예: 나만의 포토 폰케이스" oninput="updPrev()"></div>
+                <div class="field"><label class="fl">카테고리 *</label><select class="fs" id="pCat" onchange="updPrev()"><option value="">선택</option><option>폰케이스</option><option>의류</option><option>머그컵</option><option>포토북</option><option>달력</option><option>키링</option><option>에코백</option><option>스티커</option><option>아크릴</option><option>기타</option></select></div>
               </div>
               <div class="form-row">
-                <div class="field">
-                  <label class="field-label">기본 가격 (원) *</label>
-                  <input class="field-input" type="number" placeholder="12900" id="prodPrice">
-                </div>
-                <div class="field">
-                  <label class="field-label">제작 기간</label>
-                  <select class="field-select">
-                    <option>2~3 영업일</option><option>3~5 영업일</option><option>5~7 영업일</option><option>7~14 영업일</option>
-                  </select>
-                </div>
+                <div class="field"><label class="fl">기본 가격 (원)</label><input class="fi" type="number" id="pPrice" placeholder="12900" oninput="updPrev()"></div>
+                <div class="field"><label class="fl">이모지</label><input class="fi" id="pEmoji" placeholder="📱" maxlength="2" oninput="updPrev()"></div>
               </div>
-              <div class="field">
-                <label class="field-label">상품 설명</label>
-                <textarea class="field-textarea" placeholder="상품의 특징, 소재, 제작 방식 등을 설명해주세요"></textarea>
+              <div class="form-row">
+                <div class="field"><label class="fl">제작기간</label><select class="fs" id="pDel"><option>2~3 영업일</option><option>3~5 영업일</option><option>5~7 영업일</option></select></div>
+                <div class="field"><label class="fl">판매 상태</label><select class="fs" id="pStat"><option>판매중</option><option>품절임박</option><option>판매중지</option><option>준비중</option></select></div>
+              </div>
+              <div class="field"><label class="fl">상품 설명</label><textarea class="ft" id="pDesc" placeholder="상품 특징, 소재, 제작 방식을 설명하세요"></textarea></div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-hd"><div class="card-title">상품 이미지</div></div>
+            <div class="card-bd">
+              <div class="upload-box" onclick="document.getElementById('pImg').click()">
+                <div style="font-size:28px;margin-bottom:6px">🖼️</div>
+                <div style="font-size:12px;color:var(--mu)">클릭하여 이미지 업로드 (JPG·PNG)</div>
+              </div>
+              <input type="file" id="pImg" style="display:none" accept="image/*">
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-hd"><div class="card-title">옵션 구성</div><span style="font-size:12px;color:var(--mu)">고객이 선택할 옵션</span></div>
+            <div class="card-bd" style="display:flex;flex-direction:column;gap:14px">
+              <div>
+                <label class="fl">옵션 그룹 1 (예: 기종, 사이즈)</label>
+                <input class="fi" id="opt1Name" placeholder="그룹명 (예: 기종 선택)" style="margin-bottom:7px">
+                <div class="opt-tags" id="opt1Tags"></div>
+                <div class="add-opt-row"><input class="add-opt-in" id="opt1In" placeholder="값 입력 후 추가" onkeydown="if(event.key==='Enter')addOpt('opt1')"><button class="add-opt-btn" onclick="addOpt('opt1')">+ 추가</button></div>
+              </div>
+              <div>
+                <label class="fl">옵션 그룹 2 (예: 색상, 재질)</label>
+                <input class="fi" id="opt2Name" placeholder="그룹명 (예: 색상)" style="margin-bottom:7px">
+                <div class="opt-tags" id="opt2Tags"></div>
+                <div class="add-opt-row"><input class="add-opt-in" id="opt2In" placeholder="값 입력 후 추가" onkeydown="if(event.key==='Enter')addOpt('opt2')"><button class="add-opt-btn" onclick="addOpt('opt2')">+ 추가</button></div>
+              </div>
+              <div>
+                <label class="fl">옵션 그룹 3 (선택)</label>
+                <input class="fi" id="opt3Name" placeholder="그룹명" style="margin-bottom:7px">
+                <div class="opt-tags" id="opt3Tags"></div>
+                <div class="add-opt-row"><input class="add-opt-in" id="opt3In" placeholder="값 입력 후 추가" onkeydown="if(event.key==='Enter')addOpt('opt3')"><button class="add-opt-btn" onclick="addOpt('opt3')">+ 추가</button></div>
               </div>
             </div>
           </div>
 
-          <!-- 이미지 업로드 -->
-          <div class="card" style="margin-bottom:16px;">
-            <div class="card-header"><div class="card-title">상품 이미지</div></div>
-            <div class="card-body">
-              <div class="upload-box" onclick="document.getElementById('prodImgInput').click()">
-                <div class="upload-box-icon">🖼️</div>
-                <div class="upload-box-text">클릭하여 상품 이미지 업로드<br><span style="font-size:11px;opacity:0.6;">JPG, PNG (권장: 800×800px, 최대 5MB)</span></div>
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-hd"><div class="card-title">커스텀 기능</div></div>
+            <div class="card-bd">
+              <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">
+                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:11px;border:1px solid var(--bd);border-radius:8px"><input type="checkbox" id="cImg" checked style="width:15px;height:15px;accent-color:var(--gold)" onchange="updPrev()"><div><div style="font-size:13px;font-weight:500">이미지 업로드 허용</div><div style="font-size:11px;color:var(--mu)">고객이 사진/파일 업로드</div></div></label>
+                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:11px;border:1px solid var(--bd);border-radius:8px"><input type="checkbox" id="cTx" checked style="width:15px;height:15px;accent-color:var(--gold)" onchange="updPrev()"><div><div style="font-size:13px;font-weight:500">텍스트 입력 허용</div><div style="font-size:11px;color:var(--mu)">고객이 문구 직접 입력</div></div></label>
+                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:11px;border:1px solid var(--bd);border-radius:8px"><input type="checkbox" id="cTmpl" checked style="width:15px;height:15px;accent-color:var(--gold)" onchange="updPrev()"><div><div style="font-size:13px;font-weight:500">템플릿 에디터 허용</div><div style="font-size:11px;color:var(--mu)">고객이 editor.html에서 디자인</div></div></label>
+                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:11px;border:1px solid var(--bd);border-radius:8px"><input type="checkbox" id="cProof" checked style="width:15px;height:15px;accent-color:var(--gold)" onchange="updPrev()"><div><div style="font-size:13px;font-weight:500">시안 확인 필수</div><div style="font-size:11px;color:var(--mu)">담당자 시안 발송 후 승인</div></div></label>
               </div>
-              <input type="file" id="prodImgInput" style="display:none" accept="image/*" onchange="handleProdImg(this)">
-              <div id="imgPreview" style="display:none;margin-top:12px;display:none;">
-                <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">업로드된 이미지</div>
-                <div style="display:flex;gap:8px;flex-wrap:wrap;" id="imgList"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 옵션 구성 -->
-          <div class="card" style="margin-bottom:16px;">
-            <div class="card-header"><div class="card-title">옵션 구성</div><div style="font-size:12px;color:var(--muted)">고객이 선택하는 옵션을 설정하세요</div></div>
-            <div class="card-body">
-              <!-- 옵션 그룹 1 -->
-              <div class="field">
-                <label class="field-label">옵션 그룹 1 (예: 사이즈, 기종)</label>
-                <input class="field-input" placeholder="옵션 그룹 이름 (예: 기종 선택)" id="opt1Name" style="margin-bottom:8px;">
-                <div class="option-tags" id="opt1Tags"></div>
-                <div class="add-option-row">
-                  <input class="add-option-input" id="opt1Input" placeholder="옵션 값 입력 후 추가 (예: 아이폰 15)">
-                  <button class="add-option-btn" onclick="addOption('opt1')">+ 추가</button>
-                </div>
-              </div>
-              <!-- 옵션 그룹 2 -->
-              <div class="field">
-                <label class="field-label">옵션 그룹 2 (예: 색상, 재질)</label>
-                <input class="field-input" placeholder="옵션 그룹 이름 (예: 색상)" id="opt2Name" style="margin-bottom:8px;">
-                <div class="option-tags" id="opt2Tags"></div>
-                <div class="add-option-row">
-                  <input class="add-option-input" id="opt2Input" placeholder="옵션 값 입력 후 추가 (예: 투명)">
-                  <button class="add-option-btn" onclick="addOption('opt2')">+ 추가</button>
-                </div>
-              </div>
-              <!-- 옵션 그룹 3 -->
-              <div class="field" style="margin-bottom:0">
-                <label class="field-label">옵션 그룹 3 (추가 선택사항)</label>
-                <input class="field-input" placeholder="옵션 그룹 이름 (예: 인쇄 방식)" id="opt3Name" style="margin-bottom:8px;">
-                <div class="option-tags" id="opt3Tags"></div>
-                <div class="add-option-row">
-                  <input class="add-option-input" id="opt3Input" placeholder="옵션 값 입력 후 추가">
-                  <button class="add-option-btn" onclick="addOption('opt3')">+ 추가</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 커스텀 설정 -->
-          <div class="card" style="margin-bottom:16px;">
-            <div class="card-header"><div class="card-title">커스텀 기능 설정</div></div>
-            <div class="card-body">
-              <div style="display:flex;flex-direction:column;gap:12px;">
-                <label style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:12px;border:1px solid var(--border);border-radius:8px;">
-                  <input type="checkbox" id="allowImg" checked style="width:16px;height:16px;accent-color:var(--gold);">
-                  <div><div style="font-size:13px;font-weight:500;">이미지 업로드 허용</div><div style="font-size:11px;color:var(--muted)">고객이 사진/디자인 파일을 직접 업로드할 수 있습니다</div></div>
-                </label>
-                <label style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:12px;border:1px solid var(--border);border-radius:8px;">
-                  <input type="checkbox" id="allowText" checked style="width:16px;height:16px;accent-color:var(--gold);">
-                  <div><div style="font-size:13px;font-weight:500;">텍스트 입력 허용</div><div style="font-size:11px;color:var(--muted)">고객이 원하는 문구를 직접 입력할 수 있습니다</div></div>
-                </label>
-                <label style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:12px;border:1px solid var(--border);border-radius:8px;">
-                  <input type="checkbox" id="requireProof" checked style="width:16px;height:16px;accent-color:var(--gold);">
-                  <div><div style="font-size:13px;font-weight:500;">시안 확인 필수</div><div style="font-size:11px;color:var(--muted)">주문 전 제작 시안을 고객에게 발송하고 승인 받습니다</div></div>
-                </label>
-                <label style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:12px;border:1px solid var(--border);border-radius:8px;">
-                  <input type="checkbox" id="minQty" style="width:16px;height:16px;accent-color:var(--gold);">
-                  <div><div style="font-size:13px;font-weight:500;">최소 주문 수량 설정</div><div style="font-size:11px;color:var(--muted)">체크 시 최소 주문 수량을 입력할 수 있습니다</div></div>
-                </label>
-              </div>
+              <div style="font-size:12px;color:var(--mu);margin-bottom:8px">연결할 템플릿 선택</div>
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px" id="tmplLinkGrid"></div>
+              <button class="btn" style="width:100%;margin-top:8px;font-size:12px" onclick="go('templates',document.querySelectorAll('.si')[6])">+ 새 템플릿 만들기 →</button>
             </div>
           </div>
         </div>
 
-        <!-- 미리보기 & 저장 -->
+        <!-- 미리보기 -->
         <div>
-          <div class="card" style="position:sticky;top:80px;">
-            <div class="card-header"><div class="card-title">상품 미리보기</div></div>
-            <div class="card-body">
-              <div style="background:var(--surface2);border-radius:12px;overflow:hidden;margin-bottom:16px;">
-                <div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:72px;background:var(--bg);" id="previewIcon">🎁</div>
-                <div style="padding:16px;">
-                  <div style="font-size:11px;color:var(--muted);margin-bottom:4px;" id="previewCat">카테고리</div>
-                  <div style="font-size:15px;font-weight:600;margin-bottom:6px;" id="previewName">상품명을 입력하세요</div>
-                  <div style="font-size:18px;font-weight:700;color:var(--gold);" id="previewPrice">₩0~</div>
-                  <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;" id="previewOptions"></div>
-                </div>
+          <div class="prev-card">
+            <div class="prev-img" id="prevEmoji">🎁</div>
+            <div class="prev-body">
+              <div class="prev-cat" id="prevCat">카테고리</div>
+              <div class="prev-name" id="prevName">상품명을 입력하세요</div>
+              <div class="prev-price" id="prevPrice">₩0~</div>
+              <div class="prev-opts" id="prevOpts"></div>
+              <div style="margin-top:10px;font-size:12px;display:flex;flex-direction:column;gap:5px">
+                <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">이미지 업로드</span><span id="pi2" style="color:var(--ok)">✓ 허용</span></div>
+                <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">텍스트</span><span id="ptx" style="color:var(--ok)">✓ 허용</span></div>
+                <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">에디터</span><span id="ptmpl" style="color:var(--ok)">✓ 허용</span></div>
+                <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">시안확인</span><span id="pproof" style="color:var(--ok)">✓ 필수</span></div>
               </div>
-              <div style="display:flex;flex-direction:column;gap:8px;">
-                <div style="display:flex;justify-content:space-between;font-size:12px;padding:8px 0;border-bottom:1px solid var(--border);">
-                  <span style="color:var(--muted)">이미지 업로드</span>
-                  <span id="prevImg" style="color:var(--success)">✓ 허용</span>
-                </div>
-                <div style="display:flex;justify-content:space-between;font-size:12px;padding:8px 0;border-bottom:1px solid var(--border);">
-                  <span style="color:var(--muted)">텍스트 커스텀</span>
-                  <span id="prevText" style="color:var(--success)">✓ 허용</span>
-                </div>
-                <div style="display:flex;justify-content:space-between;font-size:12px;padding:8px 0;">
-                  <span style="color:var(--muted)">시안 확인</span>
-                  <span id="prevProof" style="color:var(--success)">✓ 필수</span>
-                </div>
-              </div>
-              <button class="save-btn" style="width:100%;margin-top:20px;" onclick="saveProduct()">상품 등록 완료</button>
-              <button style="width:100%;margin-top:8px;background:none;border:1px solid var(--border2);border-radius:8px;padding:10px;font-family:inherit;font-size:13px;cursor:pointer;color:var(--muted);" onclick="showToast('임시저장 되었습니다')">임시저장</button>
             </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+            <button class="btn dark" style="width:100%;padding:11px" onclick="saveProduct()">상품 등록 완료</button>
+            <button class="btn" style="width:100%;padding:9px" onclick="toast('임시저장 완료')">임시저장</button>
+            <button class="btn" style="width:100%;padding:9px" onclick="window.open('product.html')">🔍 미리보기</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- === UPLOADS === -->
+    <!-- 템플릿 관리 -->
+    <div id="tab-templates" style="display:none">
+      <div class="fbar">
+        <input class="si-input" placeholder="템플릿 검색...">
+        <select class="fs-sm"><option>전체 상품</option><option>폰케이스</option><option>머그컵</option><option>의류</option><option>공통</option></select>
+        <select class="fs-sm"><option>전체 상태</option><option>활성</option><option>비활성</option></select>
+        <button class="btn gold" onclick="openTmplModal()">+ 새 템플릿 등록</button>
+        <button class="btn" onclick="window.open('editor.html')">🎨 에디터 바로가기</button>
+      </div>
+      <div class="tmpl-grid" id="tmplGrid"></div>
+      <div class="metrics" style="grid-template-columns:repeat(4,1fr)">
+        <div class="metric"><div class="m-lbl">전체 템플릿</div><div class="m-val">8</div></div>
+        <div class="metric"><div class="m-lbl">이번달 사용</div><div class="m-val" style="color:var(--gold)">622회</div></div>
+        <div class="metric"><div class="m-lbl">인기 템플릿</div><div class="m-val" style="font-size:15px">미니멀 블랙</div></div>
+        <div class="metric"><div class="m-lbl">활성</div><div class="m-val" style="color:var(--ok)">6</div></div>
+      </div>
+    </div>
+
+    <!-- 고객 파일 -->
     <div id="tab-uploads" style="display:none">
-      <div class="card">
-        <div class="card-header"><div class="card-title">고객 업로드 파일 관리</div><div style="font-size:12px;color:var(--muted)">주문별 업로드된 이미지 및 디자인 파일</div></div>
-        <div class="card-body" style="padding:0">
-          <table>
-            <thead><tr><th>주문번호</th><th>고객명</th><th>상품</th><th>파일 미리보기</th><th>파일명</th><th>업로드 일시</th><th>상태</th><th>액션</th></tr></thead>
-            <tbody>
-              <tr>
-                <td>#ORD-2847</td><td>김지수</td><td>폰케이스</td>
-                <td><div class="upload-thumb" style="width:44px;height:44px;display:inline-flex;">🖼️<div class="upload-overlay">보기</div></div></td>
-                <td><div style="font-size:12px">graduation_photo.jpg<br><span style="color:var(--muted)">2.4MB</span></div></td>
-                <td style="font-size:12px;color:var(--muted)">2025.07.12 14:32</td>
-                <td><span class="badge badge-warning">검토 필요</span></td>
-                <td><button class="topbar-btn" onclick="showToast('파일이 승인되었습니다')">승인</button></td>
-              </tr>
-              <tr>
-                <td>#ORD-2846</td><td>박영우</td><td>머그컵 로고</td>
-                <td><div class="upload-thumb" style="width:44px;height:44px;display:inline-flex;">🏢<div class="upload-overlay">보기</div></div></td>
-                <td><div style="font-size:12px">company_logo_final.ai<br><span style="color:var(--muted)">8.1MB · AI파일</span></div></td>
-                <td style="font-size:12px;color:var(--muted)">2025.07.12 11:15</td>
-                <td><span class="badge badge-success">승인됨</span></td>
-                <td><button class="topbar-btn" onclick="showToast('다운로드를 시작합니다')">다운로드</button></td>
-              </tr>
-              <tr>
-                <td>#ORD-2845</td><td>이소연</td><td>키링 사진</td>
-                <td><div class="upload-thumb" style="width:44px;height:44px;display:inline-flex;">💍<div class="upload-overlay">보기</div></div></td>
-                <td><div style="font-size:12px">wedding_couple.jpg<br><span style="color:var(--muted)">5.7MB</span></div></td>
-                <td style="font-size:12px;color:var(--muted)">2025.07.11 09:44</td>
-                <td><span class="badge badge-success">제작완료</span></td>
-                <td><button class="topbar-btn">다운로드</button></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <div class="fbar"><input class="si-input" placeholder="주문번호, 고객명 검색..."><select class="fs-sm"><option>전체 상태</option><option>검토 필요</option><option>승인됨</option></select></div>
+      <div class="card"><div style="overflow-x:auto"><table><thead><tr><th>주문번호</th><th>고객</th><th>상품</th><th>파일명</th><th>크기</th><th>일시</th><th>상태</th><th>액션</th></tr></thead><tbody id="uploadTbl"></tbody></table></div></div>
     </div>
 
-    <!-- === CUSTOMERS === -->
+    <!-- 회원 관리 -->
     <div id="tab-customers" style="display:none">
-      <div class="metrics" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px;">
-        <div class="metric-card"><div class="metric-label">전체 회원</div><div class="metric-value">3,284</div><div class="metric-change up">↑ 이번 달 +142명</div></div>
-        <div class="metric-card"><div class="metric-label">이번 달 신규</div><div class="metric-value">142</div><div class="metric-change up">↑ 전월 대비 +18%</div></div>
-        <div class="metric-card"><div class="metric-label">재구매율</div><div class="metric-value">68%</div><div class="metric-change up">↑ 전월 대비 +3%</div></div>
+      <div class="metrics" style="grid-template-columns:repeat(3,1fr)">
+        <div class="metric"><div class="m-lbl">전체 회원</div><div class="m-val">3,284</div><div class="m-chg up">↑ 이번달 +142</div></div>
+        <div class="metric"><div class="m-lbl">신규 (이번달)</div><div class="m-val">142</div><div class="m-chg up">↑ +18%</div></div>
+        <div class="metric"><div class="m-lbl">재구매율</div><div class="m-val">68%</div><div class="m-chg up">↑ +3%</div></div>
       </div>
-      <div class="card">
-        <div class="card-header"><div class="card-title">회원 목록</div></div>
-        <div class="card-body" style="padding:0">
-          <table>
-            <thead><tr><th>이름</th><th>이메일</th><th>가입일</th><th>주문 수</th><th>누적 구매액</th><th>등급</th></tr></thead>
-            <tbody>
-              <tr><td>김지수</td><td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b1dbd8c2c4f1d4dcd0d8dd9fd2dedc">[email&#160;protected]</a></td><td>2024.03.12</td><td>7</td><td>₩284,000</td><td><span class="badge badge-gold">VIP</span></td></tr>
-              <tr><td>박영우</td><td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9fe6f0eaf1f8e8f0f0dffaf2fef6f3b1fcf0f2">[email&#160;protected]</a></td><td>2024.11.05</td><td>3</td><td>₩482,000</td><td><span class="badge badge-gold">VIP</span></td></tr>
-              <tr><td>이소연</td><td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b0c3dfc9d5dfdef0d5ddd1d9dc9ed3dfdd">[email&#160;protected]</a></td><td>2025.01.20</td><td>1</td><td>₩2,225,000</td><td><span class="badge badge-success">기업</span></td></tr>
-              <tr><td>최민준</td><td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4b262225213e250b2e262a222765282426">[email&#160;protected]</a></td><td>2025.04.08</td><td>2</td><td>₩155,600</td><td><span class="badge badge-gray">일반</span></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <div class="fbar"><input class="si-input" placeholder="이름, 이메일 검색..."><select class="fs-sm"><option>전체 등급</option><option>VIP</option><option>일반</option><option>기업</option></select></div>
+      <div class="card"><table><thead><tr><th>이름</th><th>이메일</th><th>가입일</th><th>주문 수</th><th>누적 구매</th><th>등급</th><th>관리</th></tr></thead><tbody id="custTbl"></tbody></table></div>
     </div>
 
-    <!-- === SETTINGS === -->
+    <!-- 설정 -->
     <div id="tab-settings" style="display:none">
-      <div class="card" style="max-width:640px;">
-        <div class="card-header"><div class="card-title">쇼핑몰 기본 설정</div></div>
-        <div class="card-body">
-          <div class="field"><label class="field-label">쇼핑몰 이름</label><input class="field-input" value="MOMENTO"></div>
-          <div class="field"><label class="field-label">기본 배송비 (원)</label><input class="field-input" type="number" value="3000"></div>
-          <div class="field"><label class="field-label">무료배송 기준 (원)</label><input class="field-input" type="number" value="50000"></div>
-          <div class="field"><label class="field-label">고객센터 이메일</label><input class="field-input" value="support@momento.kr"></div>
-          <div class="field"><label class="field-label">카카오 채널 ID</label><input class="field-input" value="@momento_official"></div>
-          <div style="display:flex;gap:8px;margin-top:8px;">
-            <button class="save-btn" onclick="showToast('설정이 저장되었습니다')">저장</button>
+      <div class="g2">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">🌐 기본 설정</div></div>
+          <div class="card-bd">
+            <div class="field"><label class="fl">쇼핑몰 이름</label><input class="fi" value="MOMENTO"></div>
+            <div class="field"><label class="fl">기본 배송비 (원)</label><input class="fi" type="number" value="3000"></div>
+            <div class="field"><label class="fl">무료배송 기준 (원)</label><input class="fi" type="number" value="50000"></div>
+            <div class="field"><label class="fl">고객센터 이메일</label><input class="fi" value="support@momento.kr"></div>
+            <button class="btn dark" onclick="toast('✅ 설정 저장 완료')">저장</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">🔗 페이지 연결 상태</div></div>
+          <div class="card-bd">
+            <div class="link-status"><div><div style="font-size:13px;font-weight:500">쇼핑몰 메인</div><div style="font-size:11px;color:var(--mu)">index.html</div></div><div style="display:flex;gap:6px;align-items:center"><span class="badge bs">● 연결됨</span><button class="btn" style="padding:4px 10px;font-size:11px" onclick="window.open('index.html')">열기</button></div></div>
+            <div class="link-status"><div><div style="font-size:13px;font-weight:500">상품 상세</div><div style="font-size:11px;color:var(--mu)">product.html</div></div><div style="display:flex;gap:6px;align-items:center"><span class="badge bs">● 연결됨</span><button class="btn" style="padding:4px 10px;font-size:11px" onclick="window.open('product.html')">열기</button></div></div>
+            <div class="link-status"><div><div style="font-size:13px;font-weight:500">커스텀 에디터</div><div style="font-size:11px;color:var(--mu)">editor.html</div></div><div style="display:flex;gap:6px;align-items:center"><span class="badge bs">● 연결됨</span><button class="btn" style="padding:4px 10px;font-size:11px" onclick="window.open('editor.html')">열기</button></div></div>
+            <div class="link-status"><div><div style="font-size:13px;font-weight:500">마이페이지</div><div style="font-size:11px;color:var(--mu)">mypage.html</div></div><div style="display:flex;gap:6px;align-items:center"><span class="badge bs">● 연결됨</span><button class="btn" style="padding:4px 10px;font-size:11px" onclick="window.open('mypage.html')">열기</button></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">🔥 Firebase 설정</div></div>
+          <div class="card-bd">
+            <div style="background:#fef3cd;border-radius:8px;padding:10px;font-size:12px;color:var(--warn);margin-bottom:14px">⚠️ firebase-config.js에서 API Key를 설정해주세요</div>
+            <div class="field"><label class="fl">API Key</label><input class="fi" placeholder="YOUR_API_KEY" type="password"></div>
+            <div class="field"><label class="fl">Project ID</label><input class="fi" placeholder="YOUR_PROJECT_ID"></div>
+            <button class="btn dark" onclick="toast('firebase-config.js 파일에서 직접 수정해주세요')">연동 안내</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">📱 SNS 로그인</div></div>
+          <div class="card-bd">
+            <div class="field"><label class="fl">카카오 JS Key</label><input class="fi" placeholder="YOUR_KAKAO_JS_KEY"></div>
+            <div class="field"><label class="fl">네이버 Client ID</label><input class="fi" placeholder="YOUR_NAVER_CLIENT_ID"></div>
+            <div class="field"><label class="fl">콜백 URL</label><input class="fi" value="https://SA12-svg.github.io/goods/auth-callback.html"></div>
+            <button class="btn dark" onclick="toast('firebase-config.js에서 수정해주세요')">저장</button>
           </div>
         </div>
       </div>
@@ -709,176 +432,272 @@
   </div>
 </div>
 
-<!-- INQUIRY MODAL -->
-<div class="overlay" id="inquiryModal" onclick="closeInquiryModal(event)">
+<!-- 주문 상세 모달 -->
+<div class="overlay" id="orderModal" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="modal">
-    <div class="modal-hd">
-      <span id="inqModalName">문의 상세</span>
-      <button class="close-btn" onclick="document.getElementById('inquiryModal').classList.remove('open')">✕</button>
+    <div class="m-hd"><span id="orderMTitle">주문 상세</span><button class="close-btn" onclick="document.getElementById('orderModal').classList.remove('open')">✕</button></div>
+    <div class="m-bd" id="orderMBody"></div>
+    <div class="m-ft"><button class="btn" onclick="document.getElementById('orderModal').classList.remove('open')">닫기</button><button class="btn dark" onclick="updOrderStatus()">상태 업데이트</button></div>
+  </div>
+</div>
+
+<!-- 문의 모달 -->
+<div class="overlay" id="inqModal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <div class="m-hd"><span id="inqMTitle">문의 상세</span><button class="close-btn" onclick="document.getElementById('inqModal').classList.remove('open')">✕</button></div>
+    <div class="m-bd">
+      <div class="g2" style="margin-bottom:14px">
+        <div style="background:var(--sur2);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--mu);margin-bottom:3px">상품</div><div id="inqMProd" style="font-size:13px;font-weight:500"></div></div>
+        <div style="background:var(--sur2);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--mu);margin-bottom:3px">수량</div><div id="inqMQty" style="font-size:13px;font-weight:500"></div></div>
+      </div>
+      <div style="background:var(--sur2);border-radius:8px;padding:12px;font-size:13px;line-height:1.7;margin-bottom:14px" id="inqMContent"></div>
+      <div class="field"><label class="fl">답변 작성</label><textarea class="ft" id="inqMReply" placeholder="견적 또는 안내 메시지" style="height:100px"></textarea></div>
     </div>
-    <div class="modal-bd">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
-        <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">상품 종류</div><div id="inqProduct" style="font-size:13px;font-weight:500;"></div></div>
-        <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">수량</div><div style="font-size:13px;font-weight:500;">100개 이상</div></div>
-      </div>
-      <div style="background:var(--bg);border-radius:8px;padding:16px;margin-bottom:20px;font-size:13px;line-height:1.7;color:var(--text);" id="inqContent"></div>
-      <div class="field"><label class="field-label">답변 작성</label><textarea class="field-textarea" id="inqReply" placeholder="고객에게 보낼 견적 또는 안내 메시지를 작성하세요" style="height:100px;"></textarea></div>
-      <div style="display:flex;gap:8px;">
-        <button class="save-btn" onclick="sendReply()" style="flex:1;">답변 보내기</button>
-        <button class="topbar-btn" onclick="showToast('주문으로 전환되었습니다')" style="flex:1;padding:12px;text-align:center;font-size:13px;">주문으로 전환</button>
-      </div>
+    <div class="m-ft">
+      <button class="btn" onclick="toast('주문으로 전환됨');document.getElementById('inqModal').classList.remove('open')">주문 전환</button>
+      <button class="btn dark" onclick="toast('✅ 답변 발송 완료');document.getElementById('inqModal').classList.remove('open')">답변 보내기</button>
     </div>
   </div>
 </div>
 
-<!-- TOAST -->
-<div class="toast" id="toast">✅ &nbsp; <span id="toastMsg"></span></div>
-
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-// Chart
-const salesData = [
-  {day:'월', val:82}, {day:'화', val:91}, {day:'수', val:74},
-  {day:'목', val:108}, {day:'금', val:128}, {day:'토', val:96}, {day:'일', val:54}
-];
-const maxVal = Math.max(...salesData.map(d=>d.val));
-const chartEl = document.getElementById('salesChart');
-if (chartEl) {
-  salesData.forEach(d => {
-    const pct = (d.val/maxVal)*100;
-    chartEl.innerHTML += `<div class="bar-wrap">
-      <span class="bar-val">${d.val}</span>
-      <div class="bar" style="height:${pct}%;min-height:8px;">
-        <div style="position:absolute;bottom:0;left:0;right:0;height:${pct}%;background:var(--gold);border-radius:4px 4px 0 0;"></div>
+<!-- 템플릿 등록 모달 -->
+<div class="overlay" id="tmplModal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal lg">
+    <div class="m-hd"><span>템플릿 등록</span><button class="close-btn" onclick="document.getElementById('tmplModal').classList.remove('open')">✕</button></div>
+    <div class="m-bd">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div>
+          <div class="field"><label class="fl">템플릿 이름 *</label><input class="fi" id="tName" placeholder="예: 미니멀 블랙"></div>
+          <div class="field"><label class="fl">적용 상품</label><select class="fs" id="tProd"><option value="all">전체 공통</option><option value="phone">폰케이스</option><option value="mug">머그컵</option><option value="hoodie">의류</option><option value="photobook">포토북</option></select></div>
+          <div class="field"><label class="fl">배경색</label><input type="color" id="tBg" value="#1a1a1a" style="width:100%;height:36px;border:1px solid var(--bd2);border-radius:8px;cursor:pointer;padding:3px" oninput="drawTmplPrev()"></div>
+          <div class="field"><label class="fl">텍스트 색상</label><input type="color" id="tAcc" value="#d4a843" style="width:100%;height:36px;border:1px solid var(--bd2);border-radius:8px;cursor:pointer;padding:3px" oninput="drawTmplPrev()"></div>
+          <div class="field"><label class="fl">기본 텍스트</label><input class="fi" id="tTx" placeholder="YOUR NAME" value="YOUR NAME" oninput="drawTmplPrev()"></div>
+          <div class="field"><label class="fl">상태</label><select class="fs" id="tStatus"><option>활성</option><option>비활성</option></select></div>
+          <button class="btn" style="width:100%;margin-bottom:6px" onclick="window.open('editor.html?admin=true')">🎨 에디터에서 편집</button>
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--mu);margin-bottom:6px">미리보기</div>
+          <canvas id="tPrevCanvas" width="260" height="260" style="border:1px solid var(--bd2);border-radius:10px;width:100%"></canvas>
+        </div>
       </div>
-      <span class="bar-label">${d.day}</span>
-    </div>`;
-  });
-}
+    </div>
+    <div class="m-ft">
+      <button class="btn" onclick="document.getElementById('tmplModal').classList.remove('open')">취소</button>
+      <button class="btn dark" onclick="saveTmpl()">템플릿 저장</button>
+    </div>
+  </div>
+</div>
 
-// Orders
-const orders = [
-  {id:'#ORD-2847', name:'김지수', product:'폰케이스 ×1', img:'📱', opt:'아이폰 15 / 투명', qty:1, price:'₩12,900', date:'07.12 14:32', status:'제작중', statusCls:'badge-warning'},
-  {id:'#ORD-2846', name:'박영우', product:'머그컵 ×10', img:'☕', opt:'화이트 / 유광', qty:10, price:'₩159,000', date:'07.12 11:15', status:'검토중', statusCls:'badge-info'},
-  {id:'#ORD-2845', name:'이소연', product:'키링 ×250', img:'🔑', opt:'아크릴 / 하트형', qty:250, price:'₩2,225,000', date:'07.11 09:44', status:'완료', statusCls:'badge-success'},
-  {id:'#ORD-2844', name:'최민준', product:'후드티 ×3', img:'👕', opt:'L / 오버핏 블랙', qty:3, price:'₩116,700', date:'07.11 08:22', status:'제작중', statusCls:'badge-warning'},
-  {id:'#ORD-2843', name:'정하은', product:'포토북 ×1', img:'📖', opt:'A5 (20p) / 무선제본', qty:1, price:'₩24,900', date:'07.10 17:01', status:'배송중', statusCls:'badge-success'},
+<div class="toast" id="toastEl"></div>
+
+<script>
+const ORDERS=[
+  {id:'ORD-2847',cust:'김지수',prod:'포토 폰케이스',em:'📱',opt:'아이폰 15 Pro / 투명',price:'₩12,900',date:'07.12 14:32',stat:'제작중',sk:'making',file:'graduation_photo.jpg',fsz:'2.4MB'},
+  {id:'ORD-2846',cust:'박영우',prod:'커스텀 머그컵',em:'☕',opt:'화이트 / 유광 × 10',price:'₩159,000',date:'07.12 11:15',stat:'검토중',sk:'review',file:'company_logo.ai',fsz:'8.1MB'},
+  {id:'ORD-2845',cust:'이소연',prod:'아크릴 키링',em:'🔑',opt:'하트형 × 250',price:'₩2,225,000',date:'07.11 09:44',stat:'완료',sk:'done',file:'wedding_couple.jpg',fsz:'5.7MB'},
+  {id:'ORD-2844',cust:'최민준',prod:'오버핏 후드티',em:'👕',opt:'L / 블랙 × 3',price:'₩116,700',date:'07.11 08:22',stat:'제작중',sk:'making',file:null,fsz:null},
+  {id:'ORD-2843',cust:'정하은',prod:'프리미엄 포토북',em:'📖',opt:'A4 20p / 무선',price:'₩24,900',date:'07.10 17:01',stat:'배송중',sk:'shipping',file:'photos.zip',fsz:'24MB'},
 ];
-const ot = document.getElementById('orderTable');
-if (ot) orders.forEach(o => {
-  ot.innerHTML += `<tr>
-    <td style="font-size:12px;color:var(--muted)">${o.id}</td>
-    <td style="font-weight:500">${o.name}</td>
-    <td>${o.product}</td>
-    <td style="font-size:22px">${o.img}</td>
-    <td style="font-size:12px;color:var(--muted)">${o.opt}</td>
-    <td style="text-align:center">${o.qty}</td>
-    <td style="font-weight:600">${o.price}</td>
-    <td style="font-size:11px;color:var(--muted)">${o.date}</td>
-    <td><span class="badge ${o.statusCls}">${o.status}</span></td>
-    <td><button class="topbar-btn" onclick="showToast('${o.id} 상태가 업데이트되었습니다')">처리</button></td>
-  </tr>`;
-});
-
-// Inquiries
-const inquiries = [
-  {name:'김현수', product:'후드티 · 기업 100벌', time:'10분 전', content:'안녕하세요, 회사 창립 20주년 기념 후드티를 100벌 제작하고 싶은데요. 로고 자수와 등판 프린트 모두 가능한지 견적 부탁드립니다. 납기는 8월 15일 이전으로 가능할까요?'},
-  {name:'송민아', product:'키링 · 웨딩 300개', time:'1시간 전', content:'결혼식 하객 300명 답례품으로 커플 사진 키링을 만들고 싶어요. 아크릴로 하면 얼마나 나올까요? 양면 인쇄도 가능한가요?'},
-  {name:'류재원', product:'달력 · 졸업기념 50부', time:'3시간 전', content:'고등학교 졸업 기념으로 우리 반 사진으로 달력을 50부 만들고 싶어요. 학생들이 각자 사진을 올릴 수 있는 방법이 있을까요?'},
-  {name:'한예진', product:'에코백 · 행사 200개', time:'어제', content:'NGO 단체 행사 기념 에코백 200개 필요합니다. 단체 로고 프린트로요. 견적서 발행도 가능한가요?'},
-  {name:'오태현', product:'폰케이스 · 그룹 30개', time:'어제', content:'동아리 30명이 같은 디자인으로 폰케이스 맞추고 싶어요. 기종이 모두 다른데 가능한가요?'},
+const INQS=[
+  {id:'I1',name:'김현수',prod:'후드티 기업주문',qty:'100개 이상',content:'회사 창립 20주년 기념 후드티 100벌 제작하고 싶습니다. 로고 자수와 등판 프린트 가능한지 견적 부탁드립니다.',time:'10분 전',stat:'미답변'},
+  {id:'I2',name:'송민아',prod:'웨딩 키링',qty:'300개',content:'결혼식 하객 300명 답례품으로 커플 사진 키링 만들고 싶어요. 아크릴로 하면 얼마나 나올까요?',time:'1시간 전',stat:'미답변'},
+  {id:'I3',name:'류재원',prod:'졸업 달력',qty:'50개',content:'고등학교 졸업 기념으로 반 사진으로 달력 50부 만들고 싶어요.',time:'3시간 전',stat:'미답변'},
+  {id:'I4',name:'한예진',prod:'에코백',qty:'200개',content:'NGO 단체 행사 기념 에코백 200개 필요합니다. 견적서 발행 가능한가요?',time:'어제',stat:'답변완료'},
+  {id:'I5',name:'오태현',prod:'폰케이스',qty:'30개',content:'동아리 30명이 같은 디자인으로 폰케이스 맞추고 싶어요.',time:'어제',stat:'미답변'},
 ];
-const il = document.getElementById('inquiryList');
-if (il) inquiries.forEach(inq => {
-  il.innerHTML += `<div class="inquiry-card" onclick="openInquiry('${inq.name}', '${inq.product}', '${inq.content}')">
-    <div class="inquiry-top"><div class="inquiry-name">${inq.name}</div><div class="inquiry-time">${inq.time}</div></div>
-    <div class="inquiry-product">${inq.product}</div>
-    <div class="inquiry-preview">${inq.content}</div>
-  </div>`;
-});
+const PRODS=[
+  {id:'p1',name:'나만의 포토 폰케이스',cat:'폰케이스',em:'📱',price:'12,900',opts:['기종 9종','재질 4종'],stat:'판매중',tmpls:['t1','t2'],cI:true,cT:true,cTm:true},
+  {id:'p2',name:'커스텀 포토 머그컵',cat:'머그컵',em:'☕',price:'15,900',opts:['색상 5종','재질 2종'],stat:'판매중',tmpls:['t3','t8'],cI:true,cT:true,cTm:true},
+  {id:'p3',name:'오버핏 후드티',cat:'의류',em:'👕',price:'38,900',opts:['사이즈 5종','색상 3종'],stat:'품절임박',tmpls:['t4'],cI:true,cT:false,cTm:false},
+  {id:'p4',name:'프리미엄 포토북',cat:'포토북',em:'📖',price:'24,900',opts:['사이즈 4종','제본 3종'],stat:'판매중',tmpls:['t3'],cI:true,cT:true,cTm:false},
+  {id:'p5',name:'아크릴 포토 키링',cat:'키링',em:'🔑',price:'8,900',opts:['모양 4종','소재 3종'],stat:'판매중',tmpls:['t1','t5'],cI:true,cT:true,cTm:true},
+];
+const TMPLS=[
+  {id:'t1',name:'미니멀 블랙',prod:'전체',bg:'#1a1a1a',acc:'#d4a843',tx:'YOUR NAME',uses:284,stat:'활성'},
+  {id:'t2',name:'그라데이션 핑크',prod:'폰케이스',bg:'#ff9a9e',acc:'#fff',tx:'LOVE',uses:196,stat:'활성'},
+  {id:'t3',name:'빈티지 필름',prod:'전체',bg:'#f5e6c8',acc:'#8b5e3c',tx:'FILM',uses:178,stat:'활성'},
+  {id:'t4',name:'스트리트',prod:'의류',bg:'#0f0f0f',acc:'#00ff88',tx:'STREET',uses:142,stat:'활성'},
+  {id:'t5',name:'파스텔 블루',prod:'전체',bg:'#a8edea',acc:'#555',tx:'SOFT',uses:134,stat:'활성'},
+  {id:'t6',name:'네온 사이버',prod:'전체',bg:'#050510',acc:'#ff00ff',tx:'CYBER',uses:122,stat:'비활성'},
+  {id:'t7',name:'포레스트',prod:'전체',bg:'#1a2f1a',acc:'#7ec850',tx:'NATURE',uses:98,stat:'활성'},
+  {id:'t8',name:'클래식 화이트',prod:'전체',bg:'#ffffff',acc:'#333',tx:'CLASSIC',uses:68,stat:'활성'},
+];
+const CUSTS=[
+  {name:'김지수',email:'jisu@email.com',joined:'2024.03.12',orders:7,total:'₩284,000',grade:'VIP'},
+  {name:'박영우',email:'youngwoo@email.com',joined:'2024.11.05',orders:3,total:'₩482,000',grade:'VIP'},
+  {name:'이소연',email:'soyeon@email.com',joined:'2025.01.20',orders:1,total:'₩2,225,000',grade:'기업'},
+  {name:'최민준',email:'minjun@email.com',joined:'2025.04.08',orders:2,total:'₩155,600',grade:'일반'},
+  {name:'정하은',email:'haen@email.com',joined:'2025.06.15',orders:1,total:'₩24,900',grade:'일반'},
+];
 
-// Tab switching
-function switchTab(tab) {
-  const tabs = ['dashboard','orders','inquiries','products','register','uploads','customers','settings'];
-  tabs.forEach(t => {
-    const el = document.getElementById('tab-'+t);
-    if (el) el.style.display = t === tab ? '' : 'none';
-  });
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  const titles = {dashboard:'대시보드',orders:'주문 관리',inquiries:'커스텀 문의',products:'상품 관리',register:'상품 등록',uploads:'고객 업로드 파일',customers:'회원 관리',settings:'설정'};
-  document.getElementById('pageTitle').textContent = titles[tab] || tab;
-  document.getElementById('breadcrumb').textContent = 'MOMENTO / ' + (titles[tab] || tab);
+const TITLES={dashboard:'대시보드',orders:'주문 관리',inquiries:'커스텀 문의',products:'상품 관리','product-new':'상품 등록',templates:'템플릿 관리',uploads:'고객 파일',customers:'회원 관리',settings:'설정'};
+
+function go(key,el){
+  Object.keys(TITLES).forEach(k=>{const t=document.getElementById('tab-'+k);if(t)t.style.display=k===key?'':'none';});
+  document.querySelectorAll('.si').forEach(i=>i.classList.remove('active'));
+  if(el)el.classList.add('active');
+  document.getElementById('pageTitle').textContent=TITLES[key]||key;
+  document.getElementById('pageBC').textContent='MOMENTO / '+(TITLES[key]||key);
+  const renders={dashboard:renderDash,orders:()=>renderOrders(ORDERS),inquiries:renderInqs,products:renderProds,templates:renderTmpls,uploads:renderUploads,customers:renderCusts,'product-new':renderProdNew};
+  if(renders[key])renders[key]();
 }
 
-// Options
-function addOption(group) {
-  const input = document.getElementById(group+'Input');
-  const tags = document.getElementById(group+'Tags');
-  const val = input.value.trim();
-  if (!val) return;
-  const tag = document.createElement('span');
-  tag.className = 'option-tag';
-  tag.innerHTML = val + '<span class="option-tag-rm" onclick="this.parentElement.remove()">✕</span>';
-  tags.appendChild(tag);
-  input.value = '';
-  updatePreview();
+// 대시보드
+function renderDash(){
+  const d=[{d:'월',v:82},{d:'화',v:91},{d:'수',v:74},{d:'목',v:108},{d:'금',v:128},{d:'토',v:96},{d:'일',v:54}];
+  const mx=Math.max(...d.map(x=>x.v));
+  document.getElementById('salesChart').innerHTML=d.map(x=>`<div class="bar-w"><span class="bar-val">${x.v}</span><div class="bar-b" style="height:${(x.v/mx*100).toFixed(0)}%"><div class="bar-fill" style="height:100%"></div></div><span class="bar-lbl">${x.d}</span></div>`).join('');
+  const cats=[['폰케이스',34],['의류',28],['포토북',18],['머그컵',12],['기타',8]];
+  document.getElementById('catChart').innerHTML=cats.map(([n,v])=>`<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:2px"><span>${n}</span><span style="font-weight:600">${v}%</span></div><div class="mini-bar"><div class="mini-bar-fill" style="width:${v}%"></div></div></div>`).join('');
+  const sm={making:'bw',review:'bi',done:'bs',shipping:'bs'};
+  const sl={making:'제작중',review:'검토중',done:'완료',shipping:'배송중'};
+  document.getElementById('dash-orders').innerHTML=ORDERS.slice(0,5).map(o=>`<tr style="cursor:pointer" onclick="openOrderModal('${o.id}')"><td style="font-size:12px;color:var(--mu)">#${o.id}</td><td style="font-weight:500">${o.cust}</td><td>${o.prod}</td><td style="font-weight:700">${o.price}</td><td><span class="badge ${sm[o.sk]||'bg'}">${sl[o.sk]||o.stat}</span></td><td><button class="btn" style="padding:4px 9px;font-size:11px" onclick="event.stopPropagation();openOrderModal('${o.id}')">처리</button></td></tr>`).join('');
+  document.getElementById('dash-inq').innerHTML=INQS.filter(i=>i.stat==='미답변').slice(0,3).map(i=>`<div class="inq-card" onclick="openInqModal('${i.id}')"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-weight:600;font-size:13px">${i.name}</span><span style="font-size:11px;color:var(--mu)">${i.time}</span></div><div style="font-size:11px;color:var(--gold);margin-bottom:3px">${i.prod} · ${i.qty}</div><div style="font-size:12px;color:var(--mu);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${i.content}</div></div>`).join('');
 }
 
-document.getElementById('opt1Input')?.addEventListener('keydown', e => { if (e.key === 'Enter') addOption('opt1'); });
-document.getElementById('opt2Input')?.addEventListener('keydown', e => { if (e.key === 'Enter') addOption('opt2'); });
-document.getElementById('opt3Input')?.addEventListener('keydown', e => { if (e.key === 'Enter') addOption('opt3'); });
+// 주문
+function renderOrders(orders){
+  document.getElementById('orderCnt').textContent='총 '+orders.length+'건';
+  const sm={making:'bw',review:'bi',done:'bs',shipping:'bs'};
+  const sl={making:'제작중',review:'검토중',done:'완료',shipping:'배송중'};
+  document.getElementById('orderTbl').innerHTML=orders.map(o=>`<tr style="cursor:pointer" onclick="openOrderModal('${o.id}')"><td style="font-size:12px;color:var(--mu)">#${o.id}</td><td style="font-weight:500">${o.cust}</td><td><div style="display:flex;align-items:center;gap:6px"><span style="font-size:18px">${o.em}</span>${o.prod}</div></td><td style="font-size:12px;color:var(--mu)">${o.opt}</td><td>${o.file?`<div style="font-size:11px;color:var(--info)">${o.file}<br><span style="color:var(--mu)">${o.fsz}</span></div>`:'<span style="color:var(--mu);font-size:12px">없음</span>'}</td><td style="font-weight:700">${o.price}</td><td style="font-size:12px;color:var(--mu)">${o.date}</td><td><span class="badge ${sm[o.sk]||'bg'}">${sl[o.sk]||o.stat}</span></td><td><button class="btn" style="padding:4px 9px;font-size:11px" onclick="event.stopPropagation();openOrderModal('${o.id}')">상세</button></td></tr>`).join('');
+}
+function filterOrders(q){renderOrders(q?ORDERS.filter(o=>o.id.includes(q)||o.cust.includes(q)):ORDERS);}
+function filterOrderStatus(s){const m={'검토중':'review','제작중':'making','배송중':'shipping','완료':'done'};renderOrders(s?ORDERS.filter(o=>o.sk===m[s]):ORDERS);}
 
-// Preview update
-function updatePreview() {
-  const name = document.getElementById('prodName')?.value || '상품명을 입력하세요';
-  const cat = document.getElementById('prodCat')?.value || '카테고리';
-  const price = document.getElementById('prodPrice')?.value || '0';
-  document.getElementById('previewName').textContent = name;
-  document.getElementById('previewCat').textContent = cat;
-  document.getElementById('previewPrice').textContent = '₩' + Number(price).toLocaleString() + '~';
+function openOrderModal(id){
+  const o=ORDERS.find(x=>x.id===id);if(!o)return;
+  document.getElementById('orderMTitle').textContent='#'+o.id+' 상세';
+  document.getElementById('orderMBody').innerHTML=`
+    <div class="g2" style="margin-bottom:14px">
+      <div style="background:var(--sur2);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--mu);margin-bottom:3px">상품</div><div style="font-size:13px;font-weight:500">${o.em} ${o.prod}</div></div>
+      <div style="background:var(--sur2);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--mu);margin-bottom:3px">금액</div><div style="font-size:14px;font-weight:700;color:var(--gold)">${o.price}</div></div>
+      <div style="background:var(--sur2);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--mu);margin-bottom:3px">고객</div><div style="font-size:13px;font-weight:500">${o.cust}</div></div>
+      <div style="background:var(--sur2);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--mu);margin-bottom:3px">옵션</div><div style="font-size:12px">${o.opt}</div></div>
+    </div>
+    ${o.file?`<div style="background:#dbeafe;border-radius:8px;padding:10px;margin-bottom:14px"><div style="font-size:11px;color:var(--info);margin-bottom:3px">업로드 파일</div><div style="font-size:13px;font-weight:500;color:var(--info)">${o.file} (${o.fsz})</div><div style="display:flex;gap:6px;margin-top:7px"><button class="btn" style="padding:5px 10px;font-size:11px" onclick="toast('파일 다운로드')">다운로드</button><button class="btn" style="padding:5px 10px;font-size:11px" onclick="toast('승인 완료')">승인</button></div></div>`:''}
+    <div class="field"><label class="fl">상태 변경</label><select class="fs" id="newStat"><option value="review" ${o.sk==='review'?'selected':''}>검토중</option><option value="making" ${o.sk==='making'?'selected':''}>제작중</option><option value="shipping" ${o.sk==='shipping'?'selected':''}>배송중</option><option value="done" ${o.sk==='done'?'selected':''}>완료</option></select></div>
+    <div class="field"><label class="fl">내부 메모</label><textarea class="ft" placeholder="내부 메모..."></textarea></div>`;
+  document.getElementById('orderModal').classList.add('open');
+}
+function updOrderStatus(){document.getElementById('orderModal').classList.remove('open');toast('✅ 상태 업데이트 완료');renderOrders(ORDERS);}
 
-  const opts1 = document.getElementById('opt1Tags')?.querySelectorAll('.option-tag') || [];
-  const opts2 = document.getElementById('opt2Tags')?.querySelectorAll('.option-tag') || [];
-  const prevOpts = document.getElementById('previewOptions');
-  if (prevOpts) {
-    prevOpts.innerHTML = '';
-    [...opts1, ...opts2].forEach(tag => {
-      const txt = tag.textContent.replace('✕','').trim();
-      prevOpts.innerHTML += `<span style="background:var(--gold-light);color:#8b6914;border-radius:6px;padding:3px 8px;font-size:11px;">${txt}</span>`;
-    });
-  }
-
-  const imgAllow = document.getElementById('allowImg')?.checked;
-  const textAllow = document.getElementById('allowText')?.checked;
-  const proof = document.getElementById('requireProof')?.checked;
-  if (document.getElementById('prevImg')) document.getElementById('prevImg').textContent = imgAllow ? '✓ 허용' : '✗ 불허';
-  if (document.getElementById('prevText')) document.getElementById('prevText').textContent = textAllow ? '✓ 허용' : '✗ 불허';
-  if (document.getElementById('prevProof')) document.getElementById('prevProof').textContent = proof ? '✓ 필수' : '선택';
+// 문의
+function renderInqs(){
+  const sm={'미답변':'bd2','답변완료':'bs','주문전환':'bgo'};
+  document.getElementById('inqList').innerHTML=INQS.map(i=>`<div class="inq-card" onclick="openInqModal('${i.id}')"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px"><span style="font-weight:600;font-size:13px">${i.name}</span><div style="display:flex;gap:5px;align-items:center"><span style="font-size:11px;color:var(--mu)">${i.time}</span><span class="badge ${sm[i.stat]||'bg'}">${i.stat}</span></div></div><div style="font-size:11px;color:var(--gold);margin-bottom:3px">${i.prod} · ${i.qty}</div><div style="font-size:12px;color:var(--mu);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${i.content}</div></div>`).join('');
+}
+function openInqModal(id){
+  const i=INQS.find(x=>x.id===id);if(!i)return;
+  document.getElementById('inqMTitle').textContent=i.name+'님의 문의';
+  document.getElementById('inqMProd').textContent=i.prod;
+  document.getElementById('inqMQty').textContent=i.qty;
+  document.getElementById('inqMContent').textContent=i.content;
+  document.getElementById('inqMReply').value='';
+  // 사이드 패널도 업데이트
+  document.getElementById('inqDetail').innerHTML=`<div class="card-hd"><div class="card-title">${i.name}님</div></div><div class="card-bd"><div style="font-size:12px;color:var(--gold);margin-bottom:7px">${i.prod} · ${i.qty}</div><div style="font-size:13px;color:var(--mu);line-height:1.7;margin-bottom:12px">${i.content}</div><textarea class="ft" placeholder="답변 입력..." style="width:100%;margin-bottom:7px;height:90px"></textarea><div style="display:flex;gap:6px"><button class="btn dark" style="flex:1;padding:8px" onclick="toast('답변 발송 완료')">답변 보내기</button><button class="btn" style="padding:8px" onclick="toast('주문 전환됨')">전환</button></div></div>`;
+  document.getElementById('inqModal').classList.add('open');
 }
 
-['prodName','prodCat','prodPrice'].forEach(id => {
-  document.getElementById(id)?.addEventListener('input', updatePreview);
-});
-['allowImg','allowText','requireProof'].forEach(id => {
-  document.getElementById(id)?.addEventListener('change', updatePreview);
-});
-
-function handleProdImg(input) {
-  if (input.files.length > 0) showToast('이미지가 업로드되었습니다: ' + input.files[0].name);
+// 상품 관리
+function renderProds(){
+  const sm={'판매중':'bs','품절임박':'bw','판매중지':'bd2'};
+  document.getElementById('prodTbl').innerHTML=PRODS.map(p=>`<tr><td><div style="display:flex;align-items:center;gap:9px"><div class="prod-thumb">${p.em}</div><div><div style="font-weight:500">${p.name}</div><div style="font-size:11px;color:var(--mu)">#${p.id}</div></div></div></td><td>${p.cat}</td><td>₩${p.price}~</td><td><div style="display:flex;flex-wrap:wrap;gap:3px">${p.opts.map(o=>`<span class="badge bgo">${o}</span>`).join('')}</div></td><td style="font-size:12px">${p.cI?'<span style="color:var(--ok)">✓이미지</span> ':''}${p.cT?'<span style="color:var(--ok)">✓텍스트</span> ':''}${p.cTm?'<span style="color:var(--ok)">✓에디터</span>':''}</td><td><span style="font-size:12px;color:var(--info)">${p.tmpls.length}개</span></td><td><span class="badge ${sm[p.stat]||'bg'}">${p.stat}</span></td><td><div style="display:flex;gap:4px"><button class="btn" style="padding:4px 9px;font-size:11px" onclick="editProd('${p.id}')">수정</button><button class="btn" style="padding:4px 9px;font-size:11px" onclick="window.open('product.html?id=${p.id}')">보기</button></div></td></tr>`).join('');
+}
+function editProd(id){
+  go('product-new',document.querySelectorAll('.si')[5]);
+  const p=PRODS.find(x=>x.id===id);if(!p)return;
+  setTimeout(()=>{
+    document.getElementById('pName').value=p.name;
+    document.getElementById('pCat').value=p.cat;
+    document.getElementById('pPrice').value=p.price.replace(',','');
+    document.getElementById('pEmoji').value=p.em;
+    updPrev();toast('수정 모드: '+p.name);
+  },100);
 }
 
-function saveProduct() {
-  const name = document.getElementById('prodName')?.value;
-  if (!name) { showToast('상품명을 입력해주세요'); return; }
-  showToast('✅ 상품이 등록되었습니다: ' + name);
-  setTimeout(() => switchTab('products'), 1500);
+// 상품 등록
+function renderProdNew(){
+  const g=document.getElementById('tmplLinkGrid');
+  if(!g)return;
+  g.innerHTML=TMPLS.map(t=>`<div style="border:2px solid var(--bd);border-radius:7px;overflow:hidden;cursor:pointer;transition:all .2s" onclick="toggleLink(this)" id="lnk-${t.id}"><div style="height:50px;background:${t.bg};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:bold;color:${t.acc}">${t.tx}</div><div style="padding:3px 5px;font-size:10px;text-align:center;color:var(--mu)">${t.name}</div></div>`).join('');
+  updPrev();
+}
+function toggleLink(el){el.style.borderColor=el.style.borderColor==='var(--gold)'?'var(--bd)':'var(--gold)';}
+function addOpt(g){
+  const inp=document.getElementById(g+'In');
+  const tags=document.getElementById(g+'Tags');
+  const v=inp.value.trim();if(!v)return;
+  const t=document.createElement('span');t.className='opt-tag';
+  t.innerHTML=v+`<span class="ot-rm" onclick="this.parentElement.remove();updPrev()">✕</span>`;
+  tags.appendChild(t);inp.value='';updPrev();
+}
+function updPrev(){
+  const n=document.getElementById('pName')?.value||'상품명을 입력하세요';
+  const c=document.getElementById('pCat')?.value||'카테고리';
+  const p=document.getElementById('pPrice')?.value||'0';
+  const e=document.getElementById('pEmoji')?.value||'🎁';
+  document.getElementById('prevEmoji').textContent=e;
+  document.getElementById('prevName').textContent=n;
+  document.getElementById('prevCat').textContent=c.toUpperCase();
+  document.getElementById('prevPrice').textContent='₩'+Number(p).toLocaleString()+'~';
+  const o1=[...document.querySelectorAll('#opt1Tags .opt-tag')].map(t=>t.textContent.replace('✕','').trim());
+  const o2=[...document.querySelectorAll('#opt2Tags .opt-tag')].map(t=>t.textContent.replace('✕','').trim());
+  document.getElementById('prevOpts').innerHTML=[...o1,...o2].slice(0,4).map(o=>`<span class="prev-opt">${o}</span>`).join('');
+  document.getElementById('pi2').textContent=document.getElementById('cImg')?.checked?'✓ 허용':'✗';
+  document.getElementById('ptx').textContent=document.getElementById('cTx')?.checked?'✓ 허용':'✗';
+  document.getElementById('ptmpl').textContent=document.getElementById('cTmpl')?.checked?'✓ 허용':'✗';
+  document.getElementById('pproof').textContent=document.getElementById('cProof')?.checked?'✓ 필수':'선택';
+}
+['cImg','cTx','cTmpl','cProof'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('change',updPrev);});
+function saveProduct(){
+  const n=document.getElementById('pName')?.value;
+  if(!n){toast('상품명을 입력해주세요');return;}
+  toast('✅ 상품 등록 완료: '+n);
+  setTimeout(()=>go('products',document.querySelectorAll('.si')[4]),1500);
 }
 
-// Inquiry modal
-function openInquiry(name, product, content) {
-  document.getElementById('inqModalName').textContent = name + '님의 문의';
-  document.getElementById('inqProduct').textContent = product;
-  document.getElementById('inqContent').textContent = content;
-  document.getElementById('inquiryModal').classList.add('open');
+// 템플릿
+function renderTmpls(){
+  const g=document.getElementById('tmplGrid');if(!g)return;
+  g.innerHTML=TMPLS.map(t=>`<div class="tmpl-card"><div class="tmpl-prev" style="background:${t.bg}"><div style="text-align:center"><div style="font-weight:bold;font-size:16px;color:${t.acc}">${t.tx}</div><div style="font-size:10px;color:${t.acc};opacity:.5;margin-top:3px">2025</div></div><div style="position:absolute;top:5px;left:5px"><span class="badge ${t.stat==='활성'?'bs':'bw'}">${t.stat}</span></div><div style="position:absolute;top:5px;right:5px"><span class="badge bgo" style="font-size:10px">${t.prod}</span></div></div><div class="tmpl-info"><div class="tmpl-nm">${t.name}</div><div class="tmpl-mt">사용 ${t.uses}회</div><div class="tmpl-acts"><button class="tmpl-btn" onclick="window.open('editor.html?admin=true&template=${t.id}')">✏️ 편집</button><button class="tmpl-btn" onclick="window.open('editor.html?template=${t.id}')">미리보기</button><button class="tmpl-btn del" onclick="toast('템플릿 삭제됨')">삭제</button></div></div></div>`).join('')+`<div style="border:2px dashed var(--bd2);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;min-height:200px;transition:all .2s" onmouseenter="this.style.borderColor='var(--gold)'" onmouseleave="this.style.borderColor='var(--bd2)'" onclick="openTmplModal()"><div style="text-align:center;color:var(--mu)"><div style="font-size:32px;margin-bottom:5px">+</div><div style="font-size:12px">새 템플릿 등록</div></div></div>`;
 }
-function closeInquiryModal(e) { if (e.target === document.getElementById('inquiryModal')) document.getElementById('inquiryModal').classList.remove('open'); }
-function sendR
+function openTmplModal(){document.getElementById('tmplModal').classList.add('open');drawTmplPrev();}
+function drawTmplPrev(){
+  const c=document.getElementById('tPrevCanvas');if(!c)return;
+  const ctx=c.getContext('2d');
+  const bg=document.getElementById('tBg')?.value||'#1a1a1a';
+  const acc=document.getElementById('tAcc')?.value||'#d4a843';
+  const tx=document.getElementById('tTx')?.value||'YOUR NAME';
+  ctx.fillStyle=bg;ctx.fillRect(0,0,260,260);
+  ctx.fillStyle=acc;ctx.font='bold 26px serif';ctx.textAlign='center';ctx.fillText(tx,130,140);
+  ctx.fillStyle=acc+'70';ctx.font='13px sans-serif';ctx.fillText('2025',130,170);
+}
+function saveTmpl(){
+  const n=document.getElementById('tName')?.value;
+  if(!n){toast('템플릿 이름을 입력해주세요');return;}
+  document.getElementById('tmplModal').classList.remove('open');
+  toast('✅ 템플릿 등록 완료: '+n);renderTmpls();
+}
+
+// 고객 파일
+function renderUploads(){
+  document.getElementById('uploadTbl').innerHTML=ORDERS.filter(o=>o.file).map(o=>`<tr><td style="font-size:12px;color:var(--mu)">#${o.id}</td><td style="font-weight:500">${o.cust}</td><td>${o.prod}</td><td style="color:var(--info);font-size:12px">${o.file}</td><td style="font-size:12px;color:var(--mu)">${o.fsz}</td><td style="font-size:12px;color:var(--mu)">${o.date}</td><td><span class="badge ${o.sk==='review'?'bw':'bs'}">${o.sk==='review'?'검토 필요':'승인됨'}</span></td><td><div style="display:flex;gap:4px"><button class="btn" style="padding:4px 8px;font-size:11px" onclick="toast('파일 다운로드')">다운로드</button><button class="btn" style="padding:4px 8px;font-size:11px" onclick="toast('승인 완료')">승인</button></div></td></tr>`).join('');
+}
+
+// 회원
+function renderCusts(){
+  const gm={'VIP':'bgo','기업':'bi','일반':'bg'};
+  document.getElementById('custTbl').innerHTML=CUSTS.map(c=>`<tr><td style="font-weight:500">${c.name}</td><td style="color:var(--mu);font-size:12px">${c.email}</td><td style="font-size:12px;color:var(--mu)">${c.joined}</td><td style="text-align:center">${c.orders}</td><td style="font-weight:700;color:var(--gold)">${c.total}</td><td><span class="badge ${gm[c.grade]||'bg'}">${c.grade}</span></td><td><button class="btn" style="padding:4px 9px;font-size:11px" onclick="toast('${c.name}님 상세 (Firebase 연동 후)')">상세</button></td></tr>`).join('');
+}
+
+function toast(msg){
+  const t=document.getElementById('toastEl');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+renderDash();
+</script>
+</body>
+</html>
