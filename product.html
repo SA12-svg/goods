@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>상품 상세 — MOMENTO</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--surface:#141414;--surface2:#1c1c1c;--surface3:#242424;--border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);--gold:#d4a843;--gold-light:#e8c87d;--gold-dim:rgba(212,168,67,.12);--text:#f0ede8;--text2:#a8a5a0;--text3:#666;--radius:14px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;}
+
+/* NAV */
+.topnav{background:rgba(10,10,10,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 48px;position:sticky;top:0;z-index:100;}
+.nav-logo{font-family:'Playfair Display',serif;font-size:22px;letter-spacing:5px;color:var(--gold);text-decoration:none;}
+.nav-breadcrumb{font-size:12px;color:var(--text3);}
+.nav-breadcrumb a{color:var(--text3);text-decoration:none;}
+.nav-breadcrumb a:hover{color:var(--text);}
+.nav-actions{display:flex;gap:8px;align-items:center;}
+.btn-sm{background:none;border:1px solid var(--border2);color:var(--text2);padding:7px 14px;border-radius:8px;cursor:pointer;font-size:12px;font-family:inherit;transition:all .2s;}
+.btn-sm:hover{border-color:var(--gold);color:var(--gold);}
+.btn-gold{background:var(--gold);border:none;color:#000;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;transition:all .2s;}
+.btn-gold:hover{background:var(--gold-light);}
+
+/* LAYOUT */
+.page{max-width:1300px;margin:0 auto;padding:40px 48px;}
+.product-layout{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;}
+
+/* 이미지 갤러리 */
+.gallery{position:sticky;top:80px;}
+.main-img{width:100%;aspect-ratio:1;background:var(--surface);border:1px solid var(--border);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:120px;position:relative;overflow:hidden;margin-bottom:12px;}
+.img-badge{position:absolute;top:16px;left:16px;background:var(--gold);color:#000;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;}
+.thumbnails{display:flex;gap:8px;}
+.thumb{width:72px;height:72px;border-radius:10px;background:var(--surface);border:2px solid transparent;display:flex;align-items:center;justify-content:center;font-size:28px;cursor:pointer;transition:all .2s;}
+.thumb.active,.thumb:hover{border-color:var(--gold);}
+.template-preview-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-top:16px;}
+.template-preview-label{font-size:11px;color:var(--gold);letter-spacing:1px;margin-bottom:10px;}
+.template-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.tmpl-thumb{aspect-ratio:1;border-radius:8px;background:var(--surface3);border:2px solid transparent;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text3);text-align:center;padding:4px;overflow:hidden;position:relative;}
+.tmpl-thumb.active,.tmpl-thumb:hover{border-color:var(--gold);}
+.tmpl-thumb canvas{width:100%;height:100%;object-fit:cover;}
+
+/* 상품 정보 */
+.prod-info{display:flex;flex-direction:column;gap:20px;}
+.prod-cat-badge{display:inline-flex;align-items:center;gap:6px;background:var(--gold-dim);border:1px solid rgba(212,168,67,.2);border-radius:4px;padding:4px 10px;font-size:11px;color:var(--gold);width:fit-content;}
+.prod-title{font-size:28px;font-weight:700;line-height:1.3;}
+.prod-rating{display:flex;align-items:center;gap:8px;font-size:13px;}
+.stars{color:var(--gold);}
+.rating-num{font-weight:600;}
+.review-cnt{color:var(--text3);}
+.price-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.price-row{display:flex;align-items:baseline;gap:8px;margin-bottom:4px;}
+.price-main{font-family:'Playfair Display',serif;font-size:32px;color:var(--gold);}
+.price-orig{font-size:15px;color:var(--text3);text-decoration:line-through;}
+.price-discount{font-size:13px;font-weight:700;color:#4ade80;}
+.price-note{font-size:12px;color:var(--text3);}
+.delivery-info{display:flex;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+.dinfo{font-size:12px;display:flex;align-items:center;gap:4px;color:var(--text2);}
+
+/* 옵션 선택 */
+.option-section{display:flex;flex-direction:column;gap:16px;}
+.opt-group{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.opt-label{font-size:12px;color:var(--text3);letter-spacing:1px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
+.opt-selected{color:var(--gold);font-weight:500;}
+.opt-chips{display:flex;gap:6px;flex-wrap:wrap;}
+.opt-chip{border:1px solid var(--border2);border-radius:8px;padding:8px 14px;cursor:pointer;font-size:13px;background:none;color:var(--text2);font-family:inherit;transition:all .2s;white-space:nowrap;}
+.opt-chip.sel,.opt-chip:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-dim);}
+.opt-chip.disabled{opacity:.3;cursor:not-allowed;}
+.color-chips{display:flex;gap:8px;flex-wrap:wrap;}
+.color-chip{width:32px;height:32px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .2s;position:relative;}
+.color-chip.sel,.color-chip:hover{border-color:var(--gold);transform:scale(1.1);}
+.color-chip span{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--text3);white-space:nowrap;}
+
+/* 수량 */
+.qty-wrap{display:flex;align-items:center;gap:12px;}
+.qty-btn{width:36px;height:36px;border-radius:50%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.qty-btn:hover{border-color:var(--gold);color:var(--gold);}
+.qty-num{font-size:18px;font-weight:600;min-width:32px;text-align:center;}
+
+/* 커스텀 옵션 */
+.custom-section{background:var(--surface);border:1px solid rgba(212,168,67,.2);border-radius:12px;padding:16px;}
+.custom-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.custom-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.custom-badge{background:var(--gold-dim);color:var(--gold);border-radius:4px;padding:2px 8px;font-size:11px;}
+.custom-options{display:flex;flex-direction:column;gap:8px;}
+.custom-opt-row{display:flex;align-items:center;gap:10px;padding:10px;background:var(--surface2);border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;}
+.custom-opt-row:hover{border-color:rgba(212,168,67,.3);}
+.custom-opt-icon{font-size:20px;width:32px;text-align:center;}
+.custom-opt-info{flex:1;}
+.custom-opt-name{font-size:13px;font-weight:500;}
+.custom-opt-desc{font-size:11px;color:var(--text3);}
+.custom-opt-arrow{color:var(--text3);font-size:16px;}
+
+/* 업로드 존 */
+.upload-zone{border:2px dashed var(--border2);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface2);}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--gold);background:var(--gold-dim);}
+.upload-icon{font-size:28px;margin-bottom:6px;}
+.upload-text{font-size:12px;color:var(--text3);}
+.upload-text strong{color:var(--gold);}
+
+/* CTA 버튼 */
+.cta-section{display:flex;flex-direction:column;gap:10px;}
+.btn-template{width:100%;padding:14px;background:none;border:2px solid var(--gold);color:var(--gold);border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-template:hover{background:var(--gold-dim);}
+.btn-cart{width:100%;padding:14px;background:var(--surface2);border:1px solid var(--border2);color:var(--text);border-radius:12px;font-size:15px;cursor:pointer;font-family:inherit;transition:all .2s;}
+.btn-cart:hover{border-color:var(--gold);color:var(--gold);}
+.btn-order{width:100%;padding:16px;background:var(--gold);border:none;color:#000;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;}
+.btn-order:hover{background:var(--gold-light);}
+
+/* 탭 (설명/리뷰/배송) */
+.tabs-section{margin-top:60px;border-top:1px solid var(--border);padding-top:40px;}
+.tab-nav{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:32px;}
+.tab-btn{padding:12px 24px;font-size:14px;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold);}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+.spec-table{width:100%;border-collapse:collapse;}
+.spec-table tr{border-bottom:1px solid var(--border);}
+.spec-table td{padding:12px 16px;font-size:13px;}
+.spec-table td:first-child{color:var(--text3);width:140px;}
+.review-list{display:flex;flex-direction:column;gap:16px;}
+.review-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.review-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.review-stars{color:var(--gold);font-size:13px;}
+.review-date{font-size:11px;color:var(--text3);}
+.review-product-tag{font-size:11px;color:var(--gold);background:var(--gold-dim);border-radius:4px;padding:2px 8px;display:inline-block;margin-bottom:8px;}
+.review-body{font-size:13px;color:var(--text2);line-height:1.7;}
+.reviewer-info{display:flex;align-items:center;gap:8px;margin-top:12px;}
+.r-avatar{width:32px;height:32px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:14px;}
+.r-name{font-size:13px;font-weight:500;}
+.r-opt{font-size:11px;color:var(--text3);}
+
+/* 연관 상품 */
+.related-section{margin-top:60px;border-top:1px solid var(--border);padding-top:40px;}
+.related-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;}
+.rel-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s;}
+.rel-card:hover{transform:translateY(-4px);border-color:rgba(212,168,67,.2);}
+.rel-img{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:40px;background:var(--surface2);}
+.rel-body{padding:12px;}
+.rel-name{font-size:12px;font-weight:500;margin-bottom:4px;}
+.rel-price{font-size:13px;color:var(--gold);font-weight:700;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--surface2);border:1px solid rgba(212,168,67,.3);border-radius:12px;padding:14px 20px;font-size:13px;transform:translateY(80px);opacity:0;transition:all .4s;display:flex;align-items:center;gap:10px;}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* 스크롤바 */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--surface);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <div style="display:flex;align-items:center;gap:24px;">
+    <a href="index.html" class="nav-logo">MOMENTO</a>
+    <div class="nav-breadcrumb">
+      <a href="index.html">홈</a> &nbsp;›&nbsp;
+      <a href="#">테크 액세서리</a> &nbsp;›&nbsp;
+      <span style="color:var(--text2)">포토 폰케이스</span>
+    </div>
+  </div>
+  <div class="nav-actions">
+    <button class="btn-sm">❤️ 찜하기</button>
+    <button class="btn-sm">🛒 장바구니 (0)</button>
+    <button class="btn-gold" onclick="location.href='index.html'">← 계속 쇼핑</button>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="product-layout">
+
+    <!-- 왼쪽: 이미지 갤러리 -->
+    <div class="gallery">
+      <div class="main-img" id="mainImg">
+        <span id="mainEmoji">📱</span>
+        <div class="img-badge">BEST</div>
+      </div>
+      <div class="thumbnails">
+        <div class="thumb active" onclick="setMainImg('📱',this)">📱</div>
+        <div class="thumb" onclick="setMainImg('🖼️',this)">🖼️</div>
+        <div class="thumb" onclick="setMainImg('✨',this)">✨</div>
+        <div class="thumb" onclick="setMainImg('🎨',this)">🎨</div>
+      </div>
+
+      <!-- 템플릿 미리보기 -->
+      <div class="template-preview-wrap">
+        <div class="template-preview-label">✦ &nbsp;커스텀 템플릿 선택</div>
+        <div class="template-grid" id="templateGrid"></div>
+        <button class="btn-template" style="margin-top:12px;padding:10px;font-size:13px;" onclick="openEditor()">
+          🎨 &nbsp;템플릿 편집기 열기
+        </button>
+      </div>
+    </div>
+
+    <!-- 오른쪽: 상품 정보 -->
+    <div class="prod-info">
+      <div>
+        <div class="prod-cat-badge">📱 &nbsp;PHONE CASE</div>
+        <h1 class="prod-title" style="margin-top:12px;">나만의 포토 폰케이스</h1>
+        <div class="prod-rating" style="margin-top:8px;">
+          <span class="stars">★★★★★</span>
+          <span class="rating-num">4.9</span>
+          <span class="review-cnt">(리뷰 284개)</span>
+          <span style="color:var(--text3);font-size:12px;">· 누적 주문 12,483개</span>
+        </div>
+      </div>
+
+      <!-- 가격 -->
+      <div class="price-wrap">
+        <div class="price-row">
+          <span class="price-main">₩12,900</span>
+          <span class="price-orig">₩16,000</span>
+          <span class="price-discount">19% 할인</span>
+        </div>
+        <div class="price-note">· 3개 이상 주문 시 5% 추가 할인 · 무료배송 기준 ₩30,000</div>
+        <div class="delivery-info">
+          <div class="dinfo">🚚 &nbsp;오늘 주문 시 <strong>3~5일 내 배송</strong></div>
+          <div class="dinfo">✅ &nbsp;시안 확인 후 제작</div>
+          <div class="dinfo">↩️ &nbsp;불량 시 100% 재제작</div>
+        </div>
+      </div>
+
+      <!-- 옵션 선택 -->
+      <div class="option-section">
+
+        <!-- 기종 선택 -->
+        <div class="opt-group">
+          <div class="opt-label">
+            기종 선택 <span class="opt-selected" id="selectedModel">아이폰 15 Pro</span>
+          </div>
+          <div class="opt-chips" id="modelChips"></div>
+        </div>
+
+        <!-- 색상/재질 -->
+        <div class="opt-group">
+          <div class="opt-label">
+            케이스 재질 <span class="opt-selected" id="selectedMaterial">투명 젤하드</span>
+          </div>
+          <div class="opt-chips" id="materialChips"></div>
+        </div>
+
+        <!-- 색상 -->
+        <div class="opt-group">
+          <div class="opt-label">색상 <span class="opt-selected" id="selectedColor">투명</span></div>
+          <div class="color-chips" id="colorChips"></div>
+        </div>
+
+        <!-- 수량 -->
+        <div class="opt-group">
+          <div class="opt-label">수량</div>
+          <div class="qty-wrap">
+            <button class="qty-btn" onclick="changeQty(-1)">−</button>
+            <span class="qty-num" id="qtyNum">1</span>
+            <button class="qty-btn" onclick="changeQty(1)">+</button>
+            <span style="font-size:12px;color:var(--text3);margin-left:8px;">3개 이상 주문 시 5% 할인</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 커스텀 옵션 -->
+      <div class="custom-section">
+        <div class="custom-header">
+          <div class="custom-title">🎨 커스텀 설정 <span class="custom-badge">필수</span></div>
+          <span style="font-size:12px;color:var(--text3)">1가지 이상 선택</span>
+        </div>
+        <div class="custom-options">
+          <div class="custom-opt-row" onclick="triggerUpload()">
+            <div class="custom-opt-icon">🖼️</div>
+            <div class="custom-opt-info">
+              <div class="custom-opt-name">이미지 업로드</div>
+              <div class="custom-opt-desc" id="uploadStatus">사진, 일러스트, 로고 파일 업로드 (JPG·PNG·AI)</div>
+            </div>
+            <div class="custom-opt-arrow">›</div>
+          </div>
+          <div class="custom-opt-row" onclick="openEditor()">
+            <div class="custom-opt-icon">✏️</div>
+            <div class="custom-opt-info">
+              <div class="custom-opt-name">템플릿으로 디자인</div>
+              <div class="custom-opt-desc">전문 템플릿에 텍스트·사진·색상 직접 편집</div>
+            </div>
+            <div class="custom-opt-arrow">›</div>
+          </div>
+          <div class="custom-opt-row">
+            <div class="custom-opt-icon">💬</div>
+            <div class="custom-opt-info">
+              <div class="custom-opt-name">텍스트 직접 입력</div>
+              <div class="custom-opt-desc" id="textPreview">이름, 날짜, 문구 등 원하는 텍스트</div>
+            </div>
+            <div class="custom-opt-arrow">›</div>
+          </div>
+        </div>
+        <input type="file" id="fileInput" style="display:none" accept="image/*,.ai,.pdf" onchange="handleFile(this)">
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-section">
+        <button class="btn-template" onclick="openEditor()">
+          ✨ 템플릿 편집기로 디자인하기
+        </button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <button class="btn-cart" onclick="addToCart()">🛒 장바구니 담기</button>
+          <button class="btn-order" onclick="orderNow()">바로 주문하기</button>
+        </div>
+      </div>
+
+      <!-- 안내 -->
+      <div style="background:var(--surface2);border-radius:10px;padding:14px;font-size:12px;color:var(--text3);line-height:1.7;">
+        ✅ 주문 후 담당 디자이너가 시안을 보내드려요<br>
+        ✅ 시안 확인 후 최종 제작 진행 (수정 1회 무료)<br>
+        ✅ 불량 또는 오배송 시 100% 무료 재제작
+      </div>
+    </div>
+  </div>
+
+  <!-- 탭 섹션 -->
+  <div class="tabs-section">
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('desc',this)">상품 설명</button>
+      <button class="tab-btn" onclick="switchTab('spec',this)">상세 스펙</button>
+      <button class="tab-btn" onclick="switchTab('review',this)">리뷰 (284)</button>
+      <button class="tab-btn" onclick="switchTab('delivery',this)">배송·교환</button>
+    </div>
+
+    <div class="tab-content active" id="tab-desc">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;">
+        <div>
+          <h3 style="font-size:18px;margin-bottom:16px;color:var(--gold)">제품 특징</h3>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="background:var(--surface);border-radius:10px;padding:16px;display:flex;gap:12px;">
+              <span style="font-size:24px;">🖨️</span>
+              <div><div style="font-size:14px;font-weight:600;margin-bottom:4px;">고해상도 UV 인쇄</div><div style="font-size:12px;color:var(--text3);">600DPI UV 직접 인쇄로 사진처럼 선명한 결과물</div></div>
+            </div>
+            <div style="background:var(--surface);border-radius:10px;padding:16px;display:flex;gap:12px;">
+              <span style="font-size:24px;">🛡️</span>
+              <div><div style="font-size:14px;font-weight:600;margin-bottom:4px;">4중 보호 구조</div><div style="font-size:12px;color:var(--text3);">충격 흡수 젤 + 하드 외피로 낙하 충격에 강함</div></div>
+            </div>
+            <div style="background:var(--surface);border-radius:10px;padding:16px;display:flex;gap:12px;">
+              <span style="font-size:24px;">🎨</span>
+              <div><div style="font-size:14px;font-weight:600;margin-bottom:4px;">무제한 디자인 자유</div><div style="font-size:12px;color:var(--text3);">사진, 그림, 텍스트 — 원하는 대로 커스텀 가능</div></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3 style="font-size:18px;margin-bottom:16px;color:var(--gold)">이런 분께 추천해요</h3>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--text2);">
+            <div style="padding:10px;background:var(--surface);border-radius:8px;">🎂 생일 선물로 세상에 하나뿐인 케이스를 선물하고 싶은 분</div>
+            <div style="padding:10px;background:var(--surface);border-radius:8px;">💑 커플끼리 같은 사진으로 커플 케이스를 맞추고 싶은 분</div>
+            <div style="padding:10px;background:var(--surface);border-radius:8px;">🎓 졸업 기념으로 친구들과 단체 케이스를 맞추고 싶은 분</div>
+            <div style="padding:10px;background:var(--surface);border-radius:8px;">🐾 반려동물 사진으로 나만의 케이스를 만들고 싶은 분</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-spec">
+      <table class="spec-table">
+        <tr><td>소재</td><td>TPU + PC 복합 소재 (젤하드)</td></tr>
+        <tr><td>인쇄 방식</td><td>UV 직접 인쇄 (600DPI)</td></tr>
+        <tr><td>지원 기종</td><td>아이폰 11~16 시리즈, 갤럭시 S20~S24 시리즈, 픽셀 6~8 시리즈</td></tr>
+        <tr><td>색상</td><td>투명 / 무광 블랙 / 유광 화이트 / 매트 클리어</td></tr>
+        <tr><td>두께</td><td>약 1.2mm (기종별 상이)</td></tr>
+        <tr><td>파일 규격</td><td>JPG, PNG (최소 2000px 권장), AI, PDF</td></tr>
+        <tr><td>제작 기간</td><td>시안 확인 후 2~3 영업일</td></tr>
+        <tr><td>배송</td><td>전국 택배 배송 (CJ대한통운)</td></tr>
+        <tr><td>교환·반품</td><td>불량 시 100% 무료 재제작 / 단순 변심 교환 불가 (커스텀 제품)</td></tr>
+      </table>
+    </div>
+
+    <div class="tab-content" id="tab-review">
+      <div style="display:flex;align-items:center;gap:24px;margin-bottom:24px;background:var(--surface);border-radius:12px;padding:20px;">
+        <div style="text-align:center;">
+          <div style="font-family:'Playfair Display',serif;font-size:48px;color:var(--gold);">4.9</div>
+          <div style="color:var(--gold);font-size:18px;">★★★★★</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:4px;">284개 리뷰</div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:20px;color:var(--text3);">5★</span><div style="flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;"><div style="width:89%;height:100%;background:var(--gold);border-radius:3px;"></div></div><span style="color:var(--text3);">89%</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:20px;color:var(--text3);">4★</span><div style="flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;"><div style="width:8%;height:100%;background:var(--gold);border-radius:3px;"></div></div><span style="color:var(--text3);">8%</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:20px;color:var(--text3);">3★</span><div style="flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;"><div style="width:2%;height:100%;background:var(--gold);border-radius:3px;"></div></div><span style="color:var(--text3);">2%</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:20px;color:var(--text3);">2★</span><div style="flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;"><div style="width:1%;height:100%;background:var(--gold);border-radius:3px;"></div></div><span style="color:var(--text3);">1%</span></div>
+        </div>
+      </div>
+      <div class="review-list">
+        <div class="review-item"><div class="review-top"><div><div class="review-stars">★★★★★</div></div><div class="review-date">2025.07.10</div></div><div class="review-product-tag">아이폰 15 Pro / 투명 젤하드</div><div class="review-body">강아지 사진으로 만들었는데 인쇄 퀄리티가 진짜 너무 좋아요! 색감도 실제랑 거의 똑같고 선명해요. 케이스 두께도 적당하고 그립감도 좋아서 완전 만족입니다 😍</div><div class="reviewer-info"><div class="r-avatar">🐶</div><div><div class="r-name">이민준</div><div class="r-opt">아이폰 15 Pro · 투명</div></div></div></div>
+        <div class="review-item"><div class="review-top"><div><div class="review-stars">★★★★★</div></div><div class="review-date">2025.07.08</div></div><div class="review-product-tag">갤럭시 S24 Ultra / 무광 블랙</div><div class="review-body">커플끼리 같은 사진으로 맞췄어요. 담당자분이 시안을 꼼꼼하게 보내주셔서 믿고 맡겼는데 결과물이 정말 예뻐요!</div><div class="reviewer-info"><div class="r-avatar">💑</div><div><div class="r-name">박소영</div><div class="r-opt">갤럭시 S24 · 무광 블랙</div></div></div></div>
+        <div class="review-item"><div class="review-top"><div><div class="review-stars">★★★★☆</div></div><div class="review-date">2025.07.05</div></div><div class="review-product-tag">아이폰 14 / 유광 화이트</div><div class="review-body">전반적으로 만족해요. 배송도 빠르고 시안도 마음에 들었는데 처음 업로드한 사진이 해상도가 낮았는지 살짝 흐려보이더라고요. 고해상도 사진 쓰면 훨씬 좋을 것 같아요!</div><div class="reviewer-info"><div class="r-avatar">📸</div><div><div class="r-name">김태현</div><div class="r-opt">아이폰 14 · 유광 화이트</div></div></div></div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-delivery">
+      <div style="display:flex;flex-direction:column;gap:16px;font-size:13px;color:var(--text2);line-height:1.8;">
+        <div style="background:var(--surface);border-radius:10px;padding:16px;"><div style="font-weight:700;margin-bottom:8px;color:var(--text);">📦 배송 안내</div>시안 확인 완료 후 2~3 영업일 내 제작 완료<br>CJ대한통운 택배 배송 (1~2일 소요)<br>제주 및 도서산간 지역 추가 배송비 부과될 수 있음</div>
+        <div style="background:var(--surface);border-radius:10px;padding:16px;"><div style="font-weight:700;margin-bottom:8px;color:var(--text);">↩️ 교환·반품 안내</div>커스텀 제작 상품 특성상 단순 변심으로 인한 교환·반품 불가<br>인쇄 불량, 오배송의 경우 100% 무료 재제작<br>불량 확인 시 수령일로부터 7일 이내 고객센터 문의</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 연관 상품 -->
+  <div class="related-section">
+    <div style="font-size:20px;font-weight:700;margin-bottom:20px;">함께 보면 좋은 상품</div>
+    <div class="related-grid" id="relatedGrid"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// URL에서 상품 ID 파라미터 읽기
+const params = new URLSearchParams(location.search);
+const prodId = params.get('id') || 'p1';
+
+// 상품 데이터 (실제로는 Firestore에서 로드)
+const PRODUCT_DATA = {
+  p1: {name:'나만의 포토 폰케이스',cat:'PHONE CASE',emoji:'📱',price:12900,
+    models:['아이폰 15 Pro','아이폰 15','아이폰 14 Pro','아이폰 14','아이폰 13','갤럭시 S24 Ultra','갤럭시 S24','갤럭시 S23','픽셀 8'],
+    materials:['투명 젤하드','무광 블랙','유광 화이트','매트 클리어'],
+    colors:[{name:'투명',hex:'rgba(200,200,255,0.3)'},{name:'블랙',hex:'#222'},{name:'화이트',hex:'#eee'},{name:'클리어',hex:'rgba(255,255,255,0.15)'}]
+  }
+};
+
+const prod = PRODUCT_DATA[prodId] || PRODUCT_DATA.p1;
+let qty = 1;
+let selModel = prod.models[0];
+let selMaterial = prod.materials[0];
+let selColor = prod.colors[0].name;
+
+// 기종 칩 렌더링
+function renderChips(arr, containerId, selectedKey, onSelect) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = arr.map((item,i) => {
+    const label = typeof item === 'string' ? item : item.name;
+    const isSel = label === selectedKey;
+    return `<button class="opt-chip${isSel?' sel':''}" onclick="(${onSelect.toString()})('${label}',this)">${label}</button>`;
+  }).join('');
+}
+
+function selectModel(val, el) {
+  selModel = val;
+  document.getElementById('selectedModel').textContent = val;
+  document.querySelectorAll('#modelChips .opt-chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function selectMaterial(val, el) {
+  selMaterial = val;
+  document.getElementById('selectedMaterial').textContent = val;
+  document.querySelectorAll('#materialChips .opt-chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+renderChips(prod.models, 'modelChips', selModel, selectModel);
+renderChips(prod.materials, 'materialChips', selMaterial, selectMaterial);
+
+// 색상 칩
+const colorContainer = document.getElementById('colorChips');
+colorContainer.innerHTML = prod.colors.map((c,i) =>
+  `<div class="color-chip${i===0?' sel':''}" style="background:${c.hex};border:1px solid var(--border2)" onclick="selectColor('${c.name}',this)">
+    <span>${c.name}</span>
+  </div>`
+).join('');
+
+function selectColor(val, el) {
+  selColor = val;
+  document.getElementById('selectedColor').textContent = val;
+  document.querySelectorAll('.color-chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function changeQty(d) {
+  qty = Math.max(1, Math.min(100, qty + d));
+  document.getElementById('qtyNum').textContent = qty;
+}
+
+function setMainImg(emoji, el) {
+  document.getElementById('mainEmoji').textContent = emoji;
+  document.querySelectorAll('.thumb').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// 템플릿 데이터 (실제로는 Firestore에서 로드)
+const TEMPLATES = [
+  {id:'t1',name:'미니멀 블랙',bg:'#1a1a1a',accent:'#d4a843',text:'YOUR\nPHOTO'},
+  {id:'t2',name:'그라데이션 핑크',bg:'linear-gradient(135deg,#ff9a9e,#fecfef)',accent:'#fff',text:'LOVE'},
+  {id:'t3',name:'빈티지 필름',bg:'#f5e6c8',accent:'#8b5e3c',text:'FILM\nSTYLE'},
+  {id:'t4',name:'스트리트',bg:'#0f0f0f',accent:'#00ff88',text:'STREET\nMODE'},
+  {id:'t5',name:'파스텔 블루',bg:'linear-gradient(135deg,#a8edea,#fed6e3)',accent:'#555',text:'SOFT'},
+  {id:'t6',name:'네온 사이버',bg:'#050510',accent:'#ff00ff',text:'CYBER'},
+  {id:'t7',name:'포레스트',bg:'#1a2f1a',accent:'#7ec850',text:'NATURE'},
+  {id:'t8',name:'클래식 화이트',bg:'#ffffff',accent:'#333',text:'CLASSIC'},
+];
+
+function renderTemplates() {
+  const grid = document.getElementById('templateGrid');
+  grid.innerHTML = TEMPLATES.map((t,i) => `
+    <div class="tmpl-thumb${i===0?' active':''}" onclick="selectTemplate('${t.id}',this)" title="${t.name}">
+      <canvas id="tmpl-${t.id}" width="60" height="60"></canvas>
+    </div>
+  `).join('');
+  TEMPLATES.forEach(t => drawTemplateThumb(t));
+}
+
+function drawTemplateThumb(t) {
+  const canvas = document.getElementById('tmpl-'+t.id);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = 60; canvas.height = 60;
+  if (t.bg.startsWith('linear-gradient')) {
+    const stops = t.bg.match(/#[a-f0-9]{6}|rgba?\([^)]+\)/gi) || ['#333','#666'];
+    const grd = ctx.createLinearGradient(0,0,60,60);
+    grd.addColorStop(0, stops[0]);
+    grd.addColorStop(1, stops[1] || stops[0]);
+    ctx.fillStyle = grd;
+  } else {
+    ctx.fillStyle = t.bg;
+  }
+  ctx.fillRect(0,0,60,60);
+  ctx.fillStyle = t.accent;
+  ctx.font = 'bold 8px sans-serif';
+  ctx.textAlign = 'center';
+  const lines = t.text.split('\n');
+  lines.forEach((l,i) => ctx.fillText(l, 30, 28 + i*11));
+}
+
+function selectTemplate(id, el) {
+  document.querySelectorAll('.tmpl-thumb').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  window._selectedTemplate = id;
+}
+
+renderTemplates();
+window._selectedTemplate = TEMPLATES[0].id;
+
+// 파일 업로드
+function triggerUpload() { document.getElementById('fileInput').click(); }
+function handleFile(input) {
+  if (input.files[0]) {
+    document.getElementById('uploadStatus').textContent = '✅ ' + input.files[0].name + ' 업로드됨';
+  }
+}
+
+// 에디터 열기
+function openEditor() {
+  const tmpl = window._selectedTemplate || 't1';
+  location.href = `editor.html?product=${prodId}&template=${tmpl}&model=${encodeURIComponent(selModel)}&material=${encodeURIComponent(selMaterial)}`;
+}
+
+function addToCart() {
+  showToast('🛒 장바구니에 담겼습니다!');
+}
+function orderNow() {
+  if (!window._selectedTemplate) { showToast('템플릿을 선택하거나 이미지를 업로드해주세요'); return; }
+  openEditor();
+}
+
+// 탭
+function switchTab(key, el) {
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+key).classList.add('active');
+  el.classList.add('active');
+}
+
+// 연관 상품
+const RELATED = [
+  {name:'커스텀 에어팟 케이스',price:'₩9,900',emoji:'🎧'},
+  {name:'포토 스마트톡',price:'₩6,900',emoji:'📲'},
+  {name:'커스텀 갤버즈 케이스',price:'₩9,900',emoji:'🎵'},
+  {name:'포토 키링',price:'₩8,900',emoji:'🔑'},
+  {name:'커스텀 스티커 세트',price:'₩4,900',emoji:'🏷️'},
+];
+document.getElementById('relatedGrid').innerHTML = RELATED.map(r=>`
+  <div class="rel-card" onclick="location.href='product.html'">
+    <div class="rel-img">${r.emoji}</div>
+    <div class="rel-body">
+      <div class="rel-name">${r.name}</div>
+      <div class="rel-price">${r.price}~</div>
+    </div>
+  </div>
+`).join('');
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
